@@ -1,17 +1,24 @@
 #pragma once
 #include "KamataEngine.h"
 
+
 #include "MapChipField.h"
+
 
 #include "CameraController.h"
 #include "Skydome.h"
 
-#include "P_Bullet.h"
-#include "P_DeathParticle.h"
-#include "Player.h"
 
-#include "E_DeathParticle.h"
+#include "Player.h"
+#include "Cursor.h"
+#include "P_DeathParticle.h"
+#include "P_Bullet.h"
+
+
 #include "Enemy.h"
+#include "E_DeathParticle.h"
+
+
 
 #include "Fade.h"
 #include <list>
@@ -23,7 +30,20 @@
 
 using namespace KamataEngine;
 
-class Game {
+
+// マウスの移動量
+/**/
+struct MouseMove 
+{
+	LONG lx;
+    LONG ly;
+    LONG lz;
+};
+
+
+
+class Game
+{
 public:
 	// デストラクタ
 	~Game();
@@ -54,6 +74,7 @@ private:
 
 	std::vector<std::vector<KamataEngine::WorldTransform*>> worldTransformBlocks_; // stdでエラーが起きたらKamataEngine::をいれる
 
+	
 	// デバックカメラの生成
 	// debugCamera_ = new DebugCamera();
 
@@ -66,12 +87,17 @@ private:
 	// スプライト
 	KamataEngine::Sprite* sprite_ = nullptr;
 
-	// ブロック
+
+
+
+	//ブロック
 	KamataEngine::Model* modelBlock_;
 	// マップチップフィールド
 	MapChipField* mapChipField_;
-
+	
 	void GenerateBlocks();
+
+
 
 	// 得点テクスチャハンドル
 	uint32_t pointHandle_ = 0;
@@ -81,13 +107,18 @@ private:
 	uint32_t timeHandle_ = 0;
 	KamataEngine::Sprite* timeSprite_ = nullptr;
 
+
+	
 	// スコア
 	int MaxScore = 1000000;
 	int score = 0;
+	
 
-	// 時間
+	
+	//時間
 	int maxtime = 100000;
 	int time = maxtime;
+
 
 	// 天球
 	Skydome* skydome_ = nullptr;
@@ -99,6 +130,13 @@ private:
 	Player* player_ = nullptr;
 	KamataEngine::Model* modelPlayer_ = nullptr;
 
+	//カーソル
+	Cursor* cursor_ = nullptr;
+	KamataEngine::Model* modelCursor_ = nullptr;
+
+
+
+
 #pragma region プレイヤーの弾
 	// 自キャラの弾
 	KamataEngine::Model* modelPlayerBullet_ = nullptr;
@@ -107,24 +145,30 @@ private:
 	// 速度
 	KamataEngine::Vector3 velocity_;
 	// 弾の寿命(フレーム数)
-	// int playerBulletLifeTime = 20; // 変更可能な左辺値にするためconstを外し型をintに変更    // スペースキーを押して弾を撃つ
+	//int playerBulletLifeTime = 20; // 変更可能な左辺値にするためconstを外し型をintに変更    // スペースキーを押して弾を撃つ
 
 #pragma endregion
 
 	// プレイヤーの弾の生成
 	P_Bullet* playerBullet_ = nullptr;
+	
 
 	// プレイヤーのパーティクル
 	P_DeathParticle* P_Particles_ = nullptr;
 	KamataEngine::Model* model_P_Particle_ = nullptr;
+
+	
+
+	
 
 #pragma endregion
 
 #pragma region 敵
 
 	// 敵
-	// Enemy* enemy_ = nullptr;
+	//Enemy* enemy_ = nullptr;
 	std::list<Enemy*> enemies_;
+
 
 	KamataEngine::Model* modelEnemy_ = nullptr;
 
@@ -138,6 +182,8 @@ private:
 
 #pragma endregion
 
+	
+
 #pragma region カメラ関係
 
 	// デバックカメラ有効
@@ -146,22 +192,26 @@ private:
 	KamataEngine::DebugCamera* debugCamera_ = nullptr;
 	// カメラコントロール
 	CameraController* cameraController_ = nullptr;
-
+	
 #pragma endregion
+
+
+
 
 	// 全ての当たり判定
 	void CheckAllCollisions();
-
+	
 #pragma region フェーズ・フェード
 
 	// ゲームのフェーズ(型)
-	enum class Phase {
-		kFadeIn,     // フェードイン
-		kPlay,       // ゲームプレイ
-		kDeath,      // プレイヤーのデス演出
-		kEnemyDeath, // 敵のデス演出
-		kFadeOut,    // フェードアウト(オーバー)
-		kFadeOut2,   // フェードアウト(クリア)
+	enum class Phase
+	{
+		kFadeIn,       // フェードイン
+		kPlay,         // ゲームプレイ
+		kDeath,        // プレイヤーのデス演出
+		kEnemyDeath,   // 敵のデス演出
+		kFadeOut,      // フェードアウト(オーバー)
+		kFadeOut2,     // フェードアウト(クリア)
 	};
 
 	// ゲームの現在フェーズから開始

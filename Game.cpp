@@ -2,26 +2,31 @@
 #include "MapChipField.h"
 #include "MyMath.h"
 
+#include <random>
 #include <cstdlib>
 #include <ctime>
-#include <random>
 
 #include "CameraController.h"
 #include "Fade.h"
 
-#include "P_Bullet.h"
 #include "Player.h"
+#include "P_Bullet.h"
 
 #include "Enemy.h"
 
+
+
 #include "imgui.h"
+
+
 
 using namespace KamataEngine;
 
 #pragma region
 #pragma endregion
 
-void Game::Initialize() {
+void Game::Initialize()
+{
 #pragma region
 
 #pragma endregion
@@ -29,16 +34,22 @@ void Game::Initialize() {
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
 
-	// ブロック
+
+	//ブロック
 	modelBlock_ = Model::CreateFromOBJ("block");
 	// マップチップフィールドの生成
 	mapChipField_ = new MapChipField;
 	// マップチップフィールドの初期化
 	mapChipField_->LoadMapchipCsv("Resources/blocks.csv");
 	GenerateBlocks();
+	
+	
 
 	P_Shot_ = Audio::GetInstance()->LoadWave("Sounds/sound/Shot.mp3");
 
+	
+
+	
 #pragma region スカイドーム
 
 	modelskydome_ = Model::CreateFromOBJ("SkyDome", true);
@@ -47,11 +58,15 @@ void Game::Initialize() {
 	skydome_->Initialize(modelskydome_, textureHandle_, &camera_);
 
 #pragma endregion
-
+	
 #pragma region プレイヤー
 
+	
 	// プレイヤー
 	modelPlayer_ = Model::CreateFromOBJ("player", true);
+
+	
+
 
 	// プレイヤーの弾
 	modelPlayerBullet_ = Model::CreateFromOBJ("bullet", true);
@@ -60,15 +75,21 @@ void Game::Initialize() {
 
 	// プレイヤーの生成
 	player_ = new Player();
+	
+
 
 	// プレイヤーの座標を指定
-	// Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(6, 30);
+	//Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(6, 30);
 	KamataEngine::Vector3 playerPosition = {-20, 0, 0};
 	player_->Initialize(modelPlayer_, &camera_, playerPosition);
 	player_->SetMapChipField(mapChipField_);
 
+	
+
+
 	// プレイヤーの弾
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < 7; i++)
+	{
 		P_Bullet* bullet = new P_Bullet();
 		bullet->Initialize(modelPlayerBullet_, &camera_, player_);
 		bullet->SetMapChipField(mapChipField_);
@@ -79,38 +100,70 @@ void Game::Initialize() {
 	P_Particles_ = new P_DeathParticle();
 	P_Particles_->Initialize(model_P_Particle_, &camera_, playerPosition);
 
-	// 得点
+
+
+	//得点
 	pointHandle_ = TextureManager::Load("Point.png");
 	pointSprite_ = KamataEngine::Sprite::Create(pointHandle_, {0, 0});
-	// 時間
+	//時間
 	timeHandle_ = TextureManager::Load("Time.png");
 	timeSprite_ = KamataEngine::Sprite::Create(timeHandle_, {0, 0});
 
+
 #pragma endregion
+
+
+
+
+#pragma region カーソル
+	
+	// カーソル
+	modelCursor_ = Model::CreateFromOBJ("Cursor", true);
+	
+	// カーソル
+	cursor_ = new Cursor();
+	
+	// カーソルの初期化
+	KamataEngine::Vector3 cursorPosition = {15, 0, 0};
+	//cursor_->Initialize(modelCursor_, &camera_, playerPosition);
+	
+	cursor_->Initialize(modelCursor_, &camera_, cursorPosition);
+	
+	//cursor_->SetMapChipField(mapChipField_);
+
+#pragma endregion
+
+
+
+
 
 #pragma region 敵
 
+	
 	// 敵の3Dモデル
 	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
-
+	
 	model_E_Particle_ = Model::CreateFromOBJ("E_deathParticle", true);
 
-	// 敵座標をマップチップ番号で指定
-	std::vector<KamataEngine::Vector2> enemyTilePositions = {
+    
+	    // 敵座標をマップチップ番号で指定
+	std::vector<KamataEngine::Vector2> enemyTilePositions = 
+	{
 	    {60, 15},
 	    //{15, 11},
-	    //{25, 5},
-	    //{35, 8},
-	    //{45, 30},
-	    //{60, 10},
-	    //{75, 6 },
-	    //{5,17},
+		//{25, 5},
+		//{35, 8},
+		//{45, 30},
+		//{60, 10},
+        //{75, 6 },
+		//{5,17},
 	    //{2, 25 },
 	    //{27, 8 },
 	};
 
 	// 敵座標をマップチップ番号で指定
-	for (const auto& tilePos : enemyTilePositions) {
+	for (const auto& tilePos : enemyTilePositions)
+	{
 		Enemy* newEnemy = new Enemy();
 		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(static_cast<uint32_t>(tilePos.x), static_cast<uint32_t>(tilePos.y));
 		Vector3 enemySize = {1.0f, 1.0f, 1.0f};
@@ -122,16 +175,17 @@ void Game::Initialize() {
 		E_Particles_->Initialize(model_E_Particle_, &camera_, enemyPosition);
 	}
 
+
 #pragma endregion
 
 #pragma region カメラ関係
 
 	// デバックカメラの生成
 	debugCamera_ = new DebugCamera(100, 200);
-
+	
 	// カメラの初期化
 	camera_.Initialize();
-
+	
 	// カメラコントローラの初期化
 	cameraController_ = new CameraController;
 	cameraController_->Initialize();
@@ -151,9 +205,13 @@ void Game::Initialize() {
 	fade_->Initialize();
 	fade_->Start(Fade::Status::FadeIn, 1.0f);
 #pragma endregion
+
 }
 
-void Game::GenerateBlocks() {
+
+
+void Game::GenerateBlocks()
+{
 
 	// 要素数
 	uint32_t numBlockVirtical = mapChipField_->GetNumBlockVirtical();
@@ -162,15 +220,19 @@ void Game::GenerateBlocks() {
 	// 要素数を変更する
 	// 列数を設定
 	worldTransformBlocks_.resize(42);
-	for (uint32_t i = 0; i < 42; ++i) {
+	for (uint32_t i = 0; i < 42; ++i) 
+	{
 		// 1列の要素数を設定
 		worldTransformBlocks_[i].resize(100);
 	}
 
 	// キューブの生成
-	for (uint32_t i = 0; i < numBlockVirtical; ++i) {
-		for (uint32_t j = 0; j < numBlockHorizontal; ++j) {
-			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kBlock) {
+	for (uint32_t i = 0; i < numBlockVirtical; ++i)
+	{
+		for (uint32_t j = 0; j < numBlockHorizontal; ++j) 
+		{
+			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kBlock) 
+			{
 				WorldTransform* worldTransform = new WorldTransform();
 				worldTransform->Initialize();
 				worldTransformBlocks_[i][j] = worldTransform;
@@ -180,7 +242,12 @@ void Game::GenerateBlocks() {
 	}
 }
 
-void Game::Update() {
+
+
+
+
+void Game::Update()
+{
 	// フェード
 	fade_->Update();
 
@@ -189,55 +256,99 @@ void Game::Update() {
 	float timeRatio = (float)time / (float)maxtime;
 	timeRatio = std::clamp(timeRatio, 0.0f, 1.0f);
 	timeSprite_->SetSize({timeRatio * 1280.0f, 30.0f}); // 幅200px、高さ20px
-	timeSprite_->SetPosition({0, 0});
+	timeSprite_->SetPosition({0, 0});           
+
+
 
 	float scoreRatio = (float)score / (float)MaxScore;
 	scoreRatio = std::clamp(scoreRatio, 0.0f, 1.0f);
 	pointSprite_->SetSize({scoreRatio * 1280.0f, 30.0f}); // 幅200px、高さ20px
-	pointSprite_->SetPosition({0, 30});
+	pointSprite_->SetPosition({0, 30});           
 
-	if (time <= 0) {
+
+
+	
+	if (time <= 0) 
+	{
 		phase_ = Phase::kDeath;
 	}
 
-	if (score >= MaxScore) {
+	if (score >= MaxScore)
+	{
 		phase_ = Phase::kEnemyDeath;
 	}
+
+
 
 	// 天球の更新
 	skydome_->Update();
 #pragma region プレイヤー
 
 	player_->Update();
+	
 	// プレイヤーの攻撃を呼び出す
+	
 
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+	if (Input::GetInstance()->IsTriggerMouse(0))
+	{
 		Audio::GetInstance()->PlayWave(P_Shot_);
-		for (P_Bullet* bullet : bullets_) {
-			if (!bullet->IsActive()) {
+		for (P_Bullet* bullet : bullets_)
+		{
+			if (!bullet->IsActive())
+			{
+				bullet->StartAttack();
+				break;
+			}
+		}
+	}
+
+
+
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) 
+	{
+		Audio::GetInstance()->PlayWave(P_Shot_);
+		for (P_Bullet* bullet : bullets_)
+		{
+			if (!bullet->IsActive()) 
+			{
 				bullet->StartAttack();
 				break;
 			}
 		}
 	}
 	// プレイヤーの弾を更新
-	for (P_Bullet* bullet : bullets_) {
+	for (P_Bullet* bullet : bullets_) 
+	{
 		bullet->Update();
-		if (!bullet->GetReflection() && bullet->IsActive()) {
+		if (!bullet->GetReflection() && bullet->IsActive())
+		{
 			score += 200;
-		}
-		// ImGui::Text("Score x 2 %d", bullet->GetReflection());
+		} 
+		//ImGui::Text("Score x 2 %d", bullet->GetReflection());
 	}
+
+
+#pragma endregion
+
+#pragma region カーソル
+
+
+	cursor_->Update();
+	Input::MouseMove mouseMove = Input::GetInstance()->GetMouseMove();
+	ImGui::Text("Mouse Move X: %ld, Y: %ld, Z: %ld", mouseMove.lX, mouseMove.lY, mouseMove.lZ);
+
 
 #pragma endregion
 
 #pragma region 敵
-
-	for (Enemy* enemy : enemies_) {
+	
+	for (Enemy* enemy : enemies_)
+	{
 		enemy->Update();
 	}
-
-	// ImGui::Text("Score %d", score);
+	
+	
+	//ImGui::Text("Score %d", score);
 
 #pragma endregion
 
@@ -246,18 +357,21 @@ void Game::Update() {
 	// デバッグカメラの更新
 	debugCamera_->Update();
 
-	switch (phase_) {
+	switch (phase_)
+	{
 	case Phase::kPlay:
 
 		// 全ての当たり判定
 		CheckAllCollisions();
 
-		if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		if (Input::GetInstance()->TriggerKey(DIK_SPACE))
+		{
 			// Audio::GetInstance()->PlayWave(PBSound_);
 		}
 
 		// ゲームプレイフェーズの処理
-		if (player_->IsDead() == true) {
+		if (player_->IsDead() == true)
+		{
 			// デス演出フェーズに切り替え
 			phase_ = Phase::kDeath;
 
@@ -268,9 +382,12 @@ void Game::Update() {
 			P_Particles_ = new P_DeathParticle();
 			P_Particles_->Initialize(model_P_Particle_, &camera_, deathParticlesPosition);
 		}
-		for (Enemy* enemy : enemies_) {
+		for (Enemy* enemy : enemies_)
+		{
 
-			if (enemy->IsEnemyDead() == true) {
+
+			if (enemy->IsEnemyDead() == true)
+			{
 				std::vector<KamataEngine::Vector2> enemyTilePositions;
 
 				// 敵の座標を取得
@@ -279,12 +396,18 @@ void Game::Update() {
 				// パーティクル
 				E_Particles_ = new E_DeathParticle();
 				E_Particles_->Initialize(model_E_Particle_, &camera_, E_deathParticlesPosition);
-			}
+			} 
 
-			if (enemy->IsEnemyDead2() == true) {
+
+			if (enemy->IsEnemyDead2() == true)
+			{
 				phase_ = Phase::kEnemyDeath;
 			}
 		}
+		
+		
+
+
 
 		break;
 
@@ -293,7 +416,8 @@ void Game::Update() {
 
 		// デスパーティクルの更新
 		P_Particles_->Update();
-		if (P_Particles_ && P_Particles_->isFinished_) {
+		if (P_Particles_ && P_Particles_->isFinished_) 
+		{
 			// フェードアウト開始
 			phase_ = Phase::kFadeOut;
 			fade_->Start(Fade::Status::FadeOut, 1.0f);
@@ -301,11 +425,14 @@ void Game::Update() {
 
 		break;
 
+		
+	
 	case Phase::kEnemyDeath:
 
 		// デスパーティクルの更新
 		E_Particles_->Update();
-		if (E_Particles_ && E_Particles_->isFinished_) {
+		if (E_Particles_ && E_Particles_->isFinished_)
+		{
 			// フェードアウト開始
 			phase_ = Phase::kFadeOut2;
 			fade_->Start(Fade::Status::FadeOut, 1.0f);
@@ -315,29 +442,35 @@ void Game::Update() {
 	case Phase::kFadeIn:
 		// フェード
 		fade_->Update();
-		if (fade_->IsFinished()) {
+		if (fade_->IsFinished())
+		{
 			phase_ = Phase::kPlay;
 		}
 		break;
 	case Phase::kFadeOut:
 		// フェード
 		fade_->Update();
-		if (fade_->IsFinished()) {
+		if (fade_->IsFinished())
+		{
 			finishedGAME_ = true;
 		}
 		break;
 	case Phase::kFadeOut2:
 		// フェード
 		fade_->Update();
-		if (fade_->IsFinished()) {
+		if (fade_->IsFinished()) 
+		{
 			finishedGAME2_ = true;
 		}
 		break;
 	}
 
+
 	// ブロックの更新
-	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) 
+	{
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine)
+		{
 			if (!worldTransformBlock)
 				continue;
 			// アフィン変換行列の作成
@@ -348,32 +481,40 @@ void Game::Update() {
 		}
 	}
 
+
 #ifdef _DEBUG
-	if (Input::GetInstance()->TriggerKey(DIK_0)) {
+	if (Input::GetInstance()->TriggerKey(DIK_0)) 
+	{
 		isDebugCameraActive_ = !isDebugCameraActive_;
 	}
 
 #endif // _DEBUG
 	ChangePhase();
-	if (isDebugCameraActive_) {
+	if (isDebugCameraActive_)
+	{
 		debugCamera_->Update();
 		camera_.matView = debugCamera_->GetCamera().matView;
 		camera_.matProjection = debugCamera_->GetCamera().matProjection;
 		camera_.TransferMatrix();
-	} else {
+	} else
+	{
 		camera_.TransferMatrix();
 		camera_.UpdateMatrix();
 	}
 }
 
-// フェーズ
-void Game::ChangePhase() {
 
-	switch (phase_) {
+// フェーズ
+void Game::ChangePhase()
+{
+
+	switch (phase_) 
+	{
 	case Phase::kPlay:
 // ゲームプレイフェーズの処理
 #pragma region プレイヤー
-		if (player_->IsDead() == true) {
+		if (player_->IsDead() == true)
+		{
 			// デス演出フェーズに切り替え
 			phase_ = Phase::kDeath;
 
@@ -387,13 +528,15 @@ void Game::ChangePhase() {
 #pragma endregion
 
 #pragma region 敵
-		for (Enemy* enemy : enemies_) {
-			if (enemy->IsEnemyDead2() == true) {
+		for (Enemy* enemy : enemies_)
+		{
+			if (enemy->IsEnemyDead2() == true)
+			{
 				// デス演出フェーズに切り替え
 				phase_ = Phase::kEnemyDeath;
 			}
 		}
-
+		
 #pragma endregion
 
 		break;
@@ -401,7 +544,8 @@ void Game::ChangePhase() {
 	case Phase::kDeath:
 		// デス演出フェーズの処理
 
-		if (P_Particles_) {
+		if (P_Particles_) 
+		{
 			// シーン終了
 			finishedGAME_ = true;
 		}
@@ -416,29 +560,42 @@ void Game::ChangePhase() {
 	}
 }
 
-void Game::CheckAllCollisions() {
+
+void Game::CheckAllCollisions()
+{
 #pragma region プレイヤーの弾と敵
 	// 判定対象1と2の座標
 	AABB aabb1, aabb2;
+	
+	
 
-	for (P_Bullet* bullet : bullets_) {
+	
+
+	for (P_Bullet* bullet : bullets_)
+	{
 		// プレイヤーの弾
 		aabb1 = bullet->GetAABB();
-		for (Enemy* enemy : enemies_) {
+		for (Enemy* enemy : enemies_)
+		{
 			aabb2 = enemy->GetAABB();
-			if (IsCollition(aabb1, aabb2)) {
+			if (IsCollition(aabb1, aabb2))
+			{
 				// 自キャラの衝突時関数を呼び出す
 				bullet->OnCollition(enemy);
 				enemy->OnCollition(bullet);
-			}
+				
+			} 
 		}
 	}
-
-	for (Enemy* enemy : enemies_) {
+	
+	for (Enemy* enemy : enemies_)
+	{
 		aabb2 = enemy->GetAABB();
-		for (P_Bullet* bullet : bullets_) {
+		for (P_Bullet* bullet : bullets_)
+		{
 			aabb1 = bullet->GetAABB();
-			if (IsCollition(aabb1, aabb2)) {
+			if (IsCollition(aabb1, aabb2))
+			{
 				enemy->OnCollition(bullet);
 				bullet->OnCollition(enemy);
 
@@ -447,52 +604,74 @@ void Game::CheckAllCollisions() {
 		}
 	}
 
+
 #pragma endregion
+	
+
 }
 
-void Game::Draw() {
 
-	Sprite::PreDraw();
+
+void Game::Draw()
+{
+	// DirectXCommonインスタンスの取得
+	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+	
+	Sprite::PreDraw(dxCommon->GetCommandList());
 
 	timeSprite_->Draw();
-
+	
 	pointSprite_->Draw();
+
 
 	Sprite::PostDraw();
 
-	Model::PreDraw();
+	Model::PreDraw(dxCommon->GetCommandList());
 
-	// ブロックの描画
-	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+
+		// ブロックの描画
+	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_)
+	{
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine)
+		{
 			if (!worldTransformBlock)
 				continue;
 			modelBlock_->Draw(*worldTransformBlock, camera_);
 		}
 	}
 
-	skydome_->Draw();
+
+skydome_->Draw();
 
 #pragma region プレイヤー
 
-	if (!player_->IsDead()) {
-		// 自キャラの描画 下記のフェーズのみ描画
-		if (phase_ == Phase::kPlay || phase_ == Phase::kFadeIn || phase_ == Phase::kEnemyDeath) {
-			player_->Draw();
-		}
+
+if (!player_->IsDead())
+{
+// 自キャラの描画 下記のフェーズのみ描画
+	if (phase_ == Phase::kPlay || phase_ == Phase::kFadeIn || phase_ == Phase::kEnemyDeath)
+	{
+		player_->Draw();
 	}
+}
+
+	cursor_->Draw();
 
 	// パーティクル(プレイヤー)
-	if (phase_ == Phase::kDeath) {
-		if ("deathParticle", true) {
+	if (phase_ == Phase::kDeath)
+	{
+		if ("deathParticle", true)
+		{
 			P_Particles_->Draw();
 		}
 	}
 
-	if (phase_ == Phase::kPlay) {
-
+	if (phase_ == Phase::kPlay) 
+	{
+		
 		// 弾の継続時間が0になるまで撃てる
-		for (P_Bullet* bullet : bullets_) {
+		for (P_Bullet* bullet : bullets_)
+		{
 			bullet->Draw();
 		}
 	}
@@ -502,37 +681,47 @@ void Game::Draw() {
 #pragma region 敵
 
 	// 敵の描画 下記のフェーズのみ描画
-	if (phase_ == Phase::kPlay || phase_ == Phase::kFadeIn || phase_ == Phase::kDeath) {
-		for (Enemy* enemy : enemies_) {
+	if (phase_ == Phase::kPlay || phase_ == Phase::kFadeIn || phase_ == Phase::kDeath) 
+	{
+		for (Enemy* enemy : enemies_)
+		{
 			std::srand(static_cast<unsigned int>(std::time(nullptr)));
-
+		
 			enemy->Draw();
 		}
+
 	}
 	// パーティクル(敵)
-	if (phase_ == Phase::kEnemyDeath) {
-		if ("E_deathParticle", true) {
+	if (phase_ == Phase::kEnemyDeath)
+	{
+		if ("E_deathParticle", true)
+		{
 			E_Particles_->Draw();
 		}
 	}
+	
 
 #pragma endregion
 
 	Model::PostDraw();
 }
 
-Game::~Game() {
+Game::~Game()
+{
 	delete sprite_;
-
+	
 	delete player_;
-	for (P_Bullet* bullet : bullets_) {
+	delete cursor_;
+	for (P_Bullet* bullet : bullets_)
+	{
 		delete bullet;
 	}
 	delete P_Particles_;
-	for (Enemy* enemy : enemies_) {
+	for (Enemy* enemy : enemies_)
+	{
 		delete enemy;
 	}
-
+    
 	delete E_Particles_;
 
 	delete skydome_;
@@ -547,12 +736,16 @@ Game::~Game() {
 	delete debugCamera_;
 
 	delete mapChipField_;
-	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) 
+	{
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) 
+		{
 			delete worldTransformBlock;
 		}
 	}
 	worldTransformBlocks_.clear();
+
+
 
 	delete timeSprite_;
 	delete pointSprite_;
