@@ -63,11 +63,11 @@ void Title::Update()
 void Title::Draw() 
 {
 	// DirectXCommonインスタンスの取得
-	//DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	
 
-	Sprite::PreDraw();
+	Sprite::PreDraw(dxCommon->GetCommandList());
 
 	titleSprite_->Draw();
 
