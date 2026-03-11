@@ -1,4 +1,4 @@
-﻿#include "P_Bullet.h"
+#include "P_Bullet.h"
 #include "KamataEngine.h"
 
 #include "MapChipField.h"

@@ -69,7 +69,7 @@ void Game::Initialize()
 
 
 	// プレイヤーの弾
-	modelPlayerBullet_ = Model::CreateFromOBJ("bullet", true);
+	modelPlayerBullet_ = Model::CreateFromOBJ("Z_bullet", true);
 	// パーティクルの3Dモデルデータの生成
 	model_P_Particle_ = Model::CreateFromOBJ("deathParticle", true);
 
@@ -124,7 +124,7 @@ void Game::Initialize()
 	cursor_ = new Cursor();
 	
 	// カーソルの初期化
-	KamataEngine::Vector3 cursorPosition = {15, 0, 0};
+	KamataEngine::Vector3 cursorPosition = {-1, 10, 0};
 	//cursor_->Initialize(modelCursor_, &camera_, playerPosition);
 	
 	cursor_->Initialize(modelCursor_, &camera_, cursorPosition);
