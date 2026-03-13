@@ -141,7 +141,7 @@ void Game::Initialize()
 
 	
 	// 敵の3Dモデル
-	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
+	modelEnemy_ = Model::CreateFromOBJ("kaizyu1", true);
 	
 	model_E_Particle_ = Model::CreateFromOBJ("E_deathParticle", true);
 
