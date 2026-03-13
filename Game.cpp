@@ -63,7 +63,7 @@ void Game::Initialize()
 
 	
 	// プレイヤー
-	modelPlayer_ = Model::CreateFromOBJ("player", true);
+	modelPlayer_ = Model::CreateFromOBJ("H_ziki", true);
 
 	
 
