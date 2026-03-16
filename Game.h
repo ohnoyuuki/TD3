@@ -29,16 +29,43 @@
 // ゲームシーン
 
 using namespace KamataEngine;
+using namespace MathUtility;
 
-
-// マウスの移動量
-/**/
-struct MouseMove 
+/*
+struct MouseMove
 {
 	LONG lx;
-    LONG ly;
-    LONG lz;
-};
+	LONG ly;
+	LONG lz;
+};*/
+
+
+/*
+
+Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2) 
+{
+	Matrix4x4 result{};
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++) 
+		{
+			result.m[i][j] = m1.m[i][0] * m2.m[0][j] + m1.m[i][1] * m2.m[1][j] + m1.m[i][2] * m2.m[2][j] + m1.m[i][3] * m2.m[3][j];
+		}
+	}
+	return result;
+}
+// ビュープロジェクション
+Matrix4x4 viewProjectionMatrix;
+//ビュープロジェクションの初期化
+Matrix4x4 InitializeViewProjectionMatrix(const Camera& camera)
+{
+	Matrix4x4 view;
+	Matrix4x4 projection;
+	return Multiply(view, projection);
+}
+*/
+
+
 
 
 
@@ -57,6 +84,18 @@ public:
 	// 描画
 	void Draw();
 
+
+
+
+	
+
+
+
+
+
+	
+
+
 	// 終了フラグ
 	bool finishedGAME_ = false;
 	// デス(オーバー)フラグのgetter
@@ -65,6 +104,17 @@ public:
 	// 敵を倒した場合の(クリア)フラグ
 	bool finishedGAME2_ = false;
 	bool IsFinishedGAME2() const { return finishedGAME2_; } ////ゲームクリア
+
+
+
+	static int GetMouscePosition(int* positionX, int* positionY);
+	
+	
+
+
+
+
+
 
 private:
 	// テクスチャハンドル
@@ -116,8 +166,8 @@ private:
 
 	
 	//時間
-	int maxtime = 100000;
-	int time = maxtime;
+	//int maxtime = 100000;
+	//int time = maxtime;
 
 
 	// 天球
@@ -130,11 +180,8 @@ private:
 	Player* player_ = nullptr;
 	KamataEngine::Model* modelPlayer_ = nullptr;
 
-	//カーソル
 	Cursor* cursor_ = nullptr;
 	KamataEngine::Model* modelCursor_ = nullptr;
-
-
 
 
 #pragma region プレイヤーの弾
@@ -166,8 +213,8 @@ private:
 #pragma region 敵
 
 	// 敵
-	//Enemy* enemy_ = nullptr;
-	std::list<Enemy*> enemies_;
+	Enemy* enemy_ = nullptr;
+	//std::list<Enemy*> enemies_;
 
 
 	KamataEngine::Model* modelEnemy_ = nullptr;
@@ -180,6 +227,12 @@ private:
 
 	int respawnTimer = 120;
 
+	// 敵HPテクスチャハンドル
+	uint32_t enemyhpHandle_ = 0;
+	// スプライト
+	Sprite* enemyhpSprite_ = nullptr;
+	uint32_t _enemyhpHandle_ = 0;
+	Sprite* _enemyhpSprite_ = nullptr;
 #pragma endregion
 
 	
@@ -225,4 +278,10 @@ private:
 #pragma endregion
 
 	uint32_t P_Shot_ = 0;
+
+
+	float t = 0.0f;
+
+	//bool useMouseAttack_ = false;
+
 };

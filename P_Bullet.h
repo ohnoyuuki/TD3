@@ -9,7 +9,7 @@ class Player;
 
 class MapChipField;
 
-class P_Bullet
+class P_Bullet 
 {
 
 	enum Corner 
@@ -23,7 +23,6 @@ class P_Bullet
 	};
 
 public:
-
 	struct CollisionMapInfo
 	{
 		bool ceiling = false;
@@ -33,26 +32,21 @@ public:
 		KamataEngine::Vector3 move;
 	};
 
-
-
 	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, Player* player);
 
 	void Update();
 
 	void StartAttack();
+	void StartAttack_at_Mouse();
 
 	void Draw();
 
-
-	
-	 // 有効かどうか
+	// 有効かどうか
 	bool IsActive() const { return isActive_; }
 
-	//弾が反射したか
+	// 弾が反射したか
 	bool GetReflection() const { return reflection_; }
 	bool reflection_ = false;
-
-
 
 	// 終了フラグ
 	bool isFinished_ = false;
@@ -73,15 +67,11 @@ public:
 
 	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 
-
-
 	float angle_ = 0.0f;
 	float cosValue_ = 0.0f;
 	float sinValue_ = 0.0f;
-	
 
 #pragma region 弾とブロックの衝突
-
 
 	// 弾の反射用
 
@@ -94,12 +84,9 @@ public:
 
 	void CheckMapHit(CollisionMapInfo& info);
 
-
 	KamataEngine::Vector3 CornerPosition(const KamataEngine::Vector3& center, Corner corner);
 
 #pragma endregion
-
-
 
 #pragma region プレイヤーの弾と敵の衝突
 
@@ -109,9 +96,8 @@ public:
 	void OnCollition(const Enemy* enemy);
 
 #pragma endregion
-	
-private:
 
+private:
 	// 攻撃のON/OFF
 	bool isActive_ = false;
 	Player* player_ = nullptr;
@@ -127,13 +113,17 @@ private:
 	// 速度
 	KamataEngine::Vector3 Bulletvelocity_;
 
-
 	float timer_ = 0.0f;
 	static inline const float kLifeTime = 2.0f;
-	
-	
 
 	static inline const float kBlank = 0.1f;
 	MapChipField* mapChipField_ = nullptr;
-	
+
+	// マウスの切り替え
+	//uint32_t OFF_Mouse = true;
+	//uint32_t ON_Mouse = false;
+
+	//bool ON_Mouse;
+	//bool OFF_Mouse;
+	//bool useMouseAttack_ = false;
 };

@@ -5,7 +5,7 @@ using namespace KamataEngine;
 
 void Clear::Initialize() 
 {
-	textureHandle_ = TextureManager::Load("ClearScene.png");
+	textureHandle_ = TextureManager::Load("Scenes/ClearScene.png");
 	clearSprite_ = Sprite::Create(textureHandle_, {0, 0});
 
 	Botan_ = Audio::GetInstance()->LoadWave("Sounds/sound/Decision2.mp3");
@@ -29,7 +29,7 @@ void Clear::Update()
 	case Phase::kMain:
 
 		// タイトルシーンの終了条件
-		if (Input::GetInstance()->TriggerKey(DIK_SPACE))
+		if (Input::GetInstance()->TriggerKey(DIK_SPACE) || Input::GetInstance()->IsTriggerMouse(0))
 		{
 			Audio::GetInstance()->PlayWave(Botan_);
 			// フェードアウト開始
@@ -64,7 +64,7 @@ void Clear::Draw()
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	// 3Dモデル描画前処理
-	Model::PreDraw(dxCommon->GetCommandList());
+	Model::PreDraw();
 
 	// 3Dモデル描画後処理
 	Model::PostDraw();

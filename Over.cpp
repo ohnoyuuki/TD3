@@ -1,10 +1,10 @@
-﻿#include "Over.h"
+#include "Over.h"
 
 using namespace KamataEngine;
 
 void Over::Initialize() 
 {
-	textureHandle_ = TextureManager::Load("gameover.png");
+	textureHandle_ = TextureManager::Load("Scenes/gameover.png");
 	overSprite_ = Sprite::Create(textureHandle_, {0, 0});
 
 	Botan_ = Audio::GetInstance()->LoadWave("Sounds/sound/Decision2.mp3");
@@ -28,7 +28,7 @@ void Over::Update()
 	case Phase::kMain:
 
 		// タイトルシーンの終了条件
-		if (Input::GetInstance()->TriggerKey(DIK_SPACE))
+		if (Input::GetInstance()->TriggerKey(DIK_SPACE) || Input::GetInstance()->IsTriggerMouse(0))
 		{
 			Audio::GetInstance()->PlayWave(Botan_);
 			// フェードアウト開始

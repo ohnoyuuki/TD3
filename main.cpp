@@ -1,18 +1,21 @@
-#include "KamataEngine.h"
 #include <Windows.h>
+#include"KamataEngine.h"
 
-#include "Clear.h"
-#include "Game.h"
-#include "Over.h"
-#include "Title.h"
-#include "Tutorial.h"
+
+#include"Title.h"
+#include"Tutorial.h"
+#include"Game.h"
+#include"Clear.h"
+#include"Over.h"
+
 
 using namespace KamataEngine;
 
 // DirectXCommonインスタンスの取得
 DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
-enum class Scene {
+enum class Scene 
+{
 	kUnknown = 0,
 	kTitle,
 	kTutorial,
@@ -41,6 +44,8 @@ Clear* gameClear = nullptr;
 // ゲームオーバーシーンの生成
 Over* gameOver = nullptr;
 
+
+
 uint32_t T_Handle_ = 0;
 uint32_t T_Voice_ = 0;
 
@@ -53,8 +58,12 @@ uint32_t C_Voice_ = 0;
 uint32_t O_Handle_ = 0;
 uint32_t O_Voice_ = 0;
 
+
+
+
 // Windowsアプリでのエントリーポイント(main関数)
-int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
+int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
+{
 	// タイトルバー
 	KamataEngine::Initialize(L"3163_");
 	// ImGuiManagerインスタンスの取得
@@ -73,27 +82,39 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// チュートリアルシーンの初期化
 	tutorial->Initialize();
 
+	
 	// ゲームオーバーシーンの初期化
 	gameOver->Initialize();
-	// ゲームクリアシーンの初期化
+	//ゲームクリアシーンの初期化
 	gameClear->Initialize();
+
+
 
 	T_Handle_ = Audio::GetInstance()->LoadWave("Sounds/bgm/Future_1.mp3");
 	T_Voice_ = Audio::GetInstance()->PlayWave(T_Handle_, true);
 
-	G_Handle_ = Audio::GetInstance()->LoadWave("Sounds/bgm/Shooting_01.mp3");
+	G_Handle_=Audio::GetInstance()->LoadWave("Sounds/bgm/Shooting_01.mp3");
+	
 
 	C_Handle_ = Audio::GetInstance()->LoadWave("Sounds/bgm/Fusion_01.mp3");
 	O_Handle_ = Audio::GetInstance()->LoadWave("Sounds/bgm/Springin_Radio_Ending.mp3");
 
-	while (true) {
+
+
+
+	while (true) 
+	{
 		// エンジンの更新
-		if (KamataEngine::Update()) {
+		if (KamataEngine::Update()) 
+		{
 			break;
 		}
 
 		// シーン切り替え
 		ChangeScene();
+
+
+
 
 		imguiManager->Begin();
 
@@ -118,7 +139,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	delete title;
 
 	// チュートリアルシーンの解放
-	if (tutorial) {
+	if (tutorial)
+	{
 		delete tutorial;
 	}
 
@@ -137,11 +159,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	KamataEngine::Finalize();
 
+
 	return 0;
 }
 
-void UpdateScene() {
-	switch (scene) {
+void UpdateScene()
+{
+	switch (scene)
+	{
 	case Scene::kTitle:
 		title->Update();
 		break;
@@ -149,9 +174,15 @@ void UpdateScene() {
 	case Scene::kTutorial:
 		tutorial->Update();
 		break;
-
+		
 	case Scene::kGame:
 		gameScene->Update();
+
+
+		
+
+
+
 
 		break;
 
@@ -165,25 +196,32 @@ void UpdateScene() {
 	}
 }
 
-void ChangeScene() {
-	switch (scene) {
+void ChangeScene() 
+{
+	switch (scene)
+	{
 	case Scene::kTitle:
 
-		if (title->IsFinishedT()) {
-
+		if (title->IsFinishedT())
+		{
+			
 			// シーンの変更
 			scene = Scene::kTutorial;
 			// 新シーンの生成と初期化
 			tutorial = new Tutorial();
 			tutorial->Initialize();
-		}
 
+			
+		}
+		
 		break;
 	case Scene::kTutorial:
-		if (tutorial->IsFinishedTU()) {
+		if (tutorial->IsFinishedTU())
+		{
 
 			// 音声停止
 			Audio::GetInstance()->StopWave(T_Voice_);
+
 
 			// シーンの変更
 			scene = Scene::kGame;
@@ -197,13 +235,15 @@ void ChangeScene() {
 
 			// ゲームシーンの音楽を再生
 			G_Voice_ = Audio::GetInstance()->PlayWave(G_Handle_, true);
+
 		}
 		break;
 
 	case Scene::kGame:
 
 		// ゲームシーンでバリアが破壊された場合
-		if (gameScene->IsFinishedGAME()) {
+		if (gameScene->IsFinishedGAME()) 
+		{
 
 			// 音声停止
 			Audio::GetInstance()->StopWave(G_Voice_);
@@ -222,7 +262,8 @@ void ChangeScene() {
 			// ゲームオーバーシーンの音楽を再生
 			O_Voice_ = Audio::GetInstance()->PlayWave(O_Handle_, true);
 
-		} else if (gameScene->IsFinishedGAME2()) {
+		} else if (gameScene->IsFinishedGAME2())
+		{
 			// 音声停止
 			Audio::GetInstance()->StopWave(G_Voice_);
 
@@ -246,7 +287,8 @@ void ChangeScene() {
 
 	case Scene::kClear:
 
-		if (gameClear->IsFinishedC()) {
+		if (gameClear->IsFinishedC()) 
+		{
 			// 音声停止
 			Audio::GetInstance()->StopWave(C_Voice_);
 
@@ -269,7 +311,8 @@ void ChangeScene() {
 
 	case Scene::kOver:
 
-		if (gameOver->IsFinishedO()) {
+		if (gameOver->IsFinishedO()) 
+		{
 
 			// 音声停止
 			Audio::GetInstance()->StopWave(O_Voice_);
@@ -293,9 +336,11 @@ void ChangeScene() {
 	}
 }
 
-void DrawScene() {
+void DrawScene()
+{
 
-	switch (scene) {
+	switch (scene)
+	{
 	case Scene::kTitle:
 		title->Draw();
 		break;
@@ -303,7 +348,7 @@ void DrawScene() {
 	case Scene::kTutorial:
 		tutorial->Draw();
 		break;
-
+		
 	case Scene::kGame:
 		gameScene->Draw();
 		break;

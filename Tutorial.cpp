@@ -1,10 +1,10 @@
-﻿#include "Tutorial.h"
+#include "Tutorial.h"
 using namespace KamataEngine;
 
 void Tutorial::Initialize()
 {
 	// チュートリアルのスプライト
-	t_Handle_ = TextureManager::Load("tdTutorial.png");
+	t_Handle_ = TextureManager::Load("Scenes/tdTutorial.png");
 	tutorialSprite_ = KamataEngine::Sprite::Create(t_Handle_, {0, 0});
 
 	Botan_ = Audio::GetInstance()->LoadWave("Sounds/sound/Decision2.mp3");
@@ -28,7 +28,7 @@ void Tutorial::Update()
 	case Phase::kMain:
 
 		// タイトルシーンの終了条件
-		if (Input::GetInstance()->TriggerKey(DIK_SPACE))
+		if (Input::GetInstance()->TriggerKey(DIK_SPACE) || Input::GetInstance()->IsTriggerMouse(0))
 		{
 			Audio::GetInstance()->PlayWave(Botan_);
 			// フェードアウト開始

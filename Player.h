@@ -1,17 +1,16 @@
-﻿#pragma once
+#pragma once
 #include "KamataEngine.h"
 #include"MyMath.h"
 #include"P_Bullet.h"
 #include<list>
+#include<DirectXMath.h>
+
 
 class MapChipField;
 class Enemy;
-class Player
+class Player 
 {
 public:
-
-
-
 	// 初期化
 	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, KamataEngine::Vector3& position);
 
@@ -20,11 +19,6 @@ public:
 
 	// 描画
 	void Draw();
-
-
-
-
-
 
 	// デスフラグ
 	bool isDead_ = false;
@@ -36,7 +30,7 @@ public:
 	static inline const float kHeight = 0.8f;
 
 	// 角
-	enum Corner
+	enum Corner 
 	{
 		kRightBottom, // 右下
 		kLeftBottom,  // 左下
@@ -94,20 +88,11 @@ public:
 	// ワールド座標を取得
 	KamataEngine::Vector3 GetWorldPosition();
 
-
 	const KamataEngine::Vector3& GetRotation() const { return worldTransform_.rotation_; }
-
 
 	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 
-
-	
-	
-
-
-	#pragma region 回転
-	
-
+#pragma region 回転
 
 	bool prevOnGround_ = false;
 
@@ -115,21 +100,11 @@ public:
 	float cosValue_ = 0.0f;
 	float sinValue_ = 0.0f;
 
-	
-
-	#pragma endregion
-
-
-
-
-
-
+#pragma endregion
 
 	static inline const float kBlank = 0.9f;
 
 	void AnimateTurn();
-
-	
 
 	~Player();
 
@@ -154,6 +129,6 @@ private:
 
 	MapChipField* mapChipField_ = nullptr;
 
-	int maxHP_ = 10;
-	int hp_ = maxHP_;
+	int32_t maxHP_ = 10;
+	int32_t hp_ = maxHP_;
 };

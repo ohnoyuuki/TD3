@@ -1,5 +1,5 @@
-﻿#include "Player.h"
-
+#include"Player.h"
+#include"Cursor.h"
 #include"KamataEngine.h"
 #include"Game.h"
 #include"cassert"
@@ -23,16 +23,14 @@ void Player::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& pos
 	model_ = model;
 
 	// textureHandle_ = textureHandle;
-    worldTransform_.Initialize();
+	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
 	worldTransform_.rotation_.y = std::numbers::pi_v<float> / 2.0f;
 
 	camera_ = camera;
-
-	
 }
 
-void Player::Update()
+void Player::Update() 
 {
 
 	// 7.旋回制御
@@ -53,13 +51,13 @@ void Player::Update()
 
 	constexpr float kTurnSpeed = 0.09f;
 	worldTransform_.rotation_.x += kTurnSpeed;
-	if (worldTransform_.rotation_.x > 6.2831853f) 
+	if (worldTransform_.rotation_.x > 6.2831853f)
 	{
-		worldTransform_.rotation_.x -= 6.2831853f;
+	    worldTransform_.rotation_.x -= 6.2831853f;
 	}*/
 
 	// 押した方向で移動ベクトルを変更(左右)
-	if (Input::GetInstance()->PushKey(DIK_A)) 
+	if (Input::GetInstance()->PushKey(DIK_A))
 	{
 		move.x -= kCharacterSpeed;
 	} else if (Input::GetInstance()->PushKey(DIK_D))
@@ -98,7 +96,7 @@ void Player::Update()
 }
 
 // プレイヤーの描画(敵当たったら非表示になる)
-void Player::Draw()
+void Player::Draw() 
 {
 	if (isDead_) 
 	{
@@ -112,7 +110,7 @@ void Player::Draw()
 void Player::AnimateTurn() 
 {
 	// 旋回制御
-	if (trunTimer_ > 0.0f) 
+	if (trunTimer_ > 0.0f)
 	{
 		trunTimer_ -= 1.0f / 60.0f;
 
@@ -131,7 +129,7 @@ Player::~Player() {}
 
 KamataEngine::Vector3 Player::CornerPosition(const KamataEngine::Vector3& center, Corner corner)
 {
-	KamataEngine::Vector3 offsetTable[kNumCorner] =
+	KamataEngine::Vector3 offsetTable[kNumCorner] = 
 	{
 	    {+kWidth / 2.0f, -kHeight / 2.0f, 0}, //  kRightBottom
 	    {-kWidth / 2.0f, -kHeight / 2.0f, 0}, //  kLeftBottom
@@ -142,7 +140,7 @@ KamataEngine::Vector3 Player::CornerPosition(const KamataEngine::Vector3& center
 	return center + offsetTable[static_cast<uint32_t>(corner)];
 }
 
-KamataEngine::Vector3 Player::GetWorldPosition() 
+KamataEngine::Vector3 Player::GetWorldPosition()
 {
 	// ワールド座標を入れる変数
 	KamataEngine::Vector3 worldPos;
@@ -153,5 +151,3 @@ KamataEngine::Vector3 Player::GetWorldPosition()
 
 	return worldPos;
 }
-
-#pragma endregion

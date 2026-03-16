@@ -5,7 +5,7 @@ using namespace KamataEngine;
 
 void Title::Initialize()
 {
-	textureHandle_ = TextureManager::Load("tdTitle.png");
+	textureHandle_ = TextureManager::Load("Scenes/tdTitle.png");
 	titleSprite_ = KamataEngine::Sprite::Create(textureHandle_, {0, 0});
 	
 	Botan_ = Audio::GetInstance()->LoadWave("Sounds/sound/Decision2.mp3");
@@ -30,7 +30,7 @@ void Title::Update()
 	case Phase::kMain:
 
 		// タイトルシーンの終了条件
-		if (Input::GetInstance()->TriggerKey(DIK_SPACE))
+		if (Input::GetInstance()->TriggerKey(DIK_SPACE) || Input::GetInstance()->IsTriggerMouse(0))
 		{
 
 			Audio::GetInstance()->PlayWave(Botan_);
@@ -63,11 +63,11 @@ void Title::Update()
 void Title::Draw() 
 {
 	// DirectXCommonインスタンスの取得
-	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+	//DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	
 
-	Sprite::PreDraw(dxCommon->GetCommandList());
+	Sprite::PreDraw();
 
 	titleSprite_->Draw();
 
