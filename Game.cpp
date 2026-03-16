@@ -700,8 +700,10 @@ void Game::CheckAllCollisions()
 
 void Game::Draw()
 {
-	
-	Sprite::PreDraw();
+	// DirectXCommonインスタンスの取得
+	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+
+	Sprite::PreDraw(dxCommon->GetCommandList());
 
 	timeSprite_->Draw();
 	
@@ -711,7 +713,7 @@ void Game::Draw()
 	
 	Sprite::PostDraw();
 
-	Model::PreDraw();
+	Model::PreDraw(dxCommon->GetCommandList());
 
 
 	cursor_->Draw();

@@ -64,7 +64,7 @@ void Clear::Draw()
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	// 3Dモデル描画前処理
-	Model::PreDraw();
+	Model::PreDraw(dxCommon->GetCommandList());
 
 	// 3Dモデル描画後処理
 	Model::PostDraw();
