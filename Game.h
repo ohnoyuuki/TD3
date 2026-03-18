@@ -17,6 +17,9 @@
 
 #include "Enemy.h"
 #include "E_DeathParticle.h"
+#include "E_Bullet.h"
+
+
 
 
 
@@ -86,15 +89,7 @@ public:
 
 
 
-
-	
-
-
-
-
-
-	
-
+#pragma region 終了フラグ
 
 	// 終了フラグ
 	bool finishedGAME_ = false;
@@ -105,18 +100,23 @@ public:
 	bool finishedGAME2_ = false;
 	bool IsFinishedGAME2() const { return finishedGAME2_; } ////ゲームクリア
 
+#pragma endregion
+
+
 
 
 	static int GetMouscePosition(int* positionX, int* positionY);
 	
 	
 
-
-
+	
 
 
 
 private:
+
+
+
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 	// 3Dモデルデータ
@@ -140,40 +140,61 @@ private:
 
 
 
-	//ブロック
+
+
+#pragma region マップ関係
+
+	// ブロック
 	KamataEngine::Model* modelBlock_;
 	// マップチップフィールド
 	MapChipField* mapChipField_;
-	
+
 	void GenerateBlocks();
+#pragma endregion
 
-
+#pragma region UI
 
 	// 得点テクスチャハンドル
 	uint32_t pointHandle_ = 0;
 	// スプライト
 	KamataEngine::Sprite* pointSprite_ = nullptr;
-
 	uint32_t timeHandle_ = 0;
 	KamataEngine::Sprite* timeSprite_ = nullptr;
-
-
-	
 	// スコア
-	int MaxScore = 1000000;
-	int score = 0;
+	int32_t MaxScore = 1000000;
+	int32_t score = 0;
+
+
+	//プレイヤーのHP
+	uint32_t playerHPHandle_ = 0;
+	Sprite* playerHPSprite_ = nullptr;
+
+	uint32_t _playerHPHandle_ = 0;
+	Sprite* _playerHPSprite_ = nullptr;
+
+
+	//敵のHP
+	// 敵HPテクスチャハンドル
+	uint32_t enemyHPHandle_ = 0;
+	// スプライト
+	Sprite* enemyHPSprite_ = nullptr;
 	
+	uint32_t _enemyHPHandle_ = 0;
+	Sprite* _enemyHPSprite_ = nullptr;
 
-	
-	//時間
-	//int maxtime = 100000;
-	//int time = maxtime;
+#pragma endregion
 
 
+
+
+#pragma region 天球
 	// 天球
 	Skydome* skydome_ = nullptr;
 	KamataEngine::Model* modelskydome_ = nullptr;
 
+#pragma endregion
+
+	
 #pragma region プレイヤー
 
 	// プレイヤー
@@ -185,6 +206,9 @@ private:
 
 
 #pragma region プレイヤーの弾
+
+	uint32_t P_Shot_ = 0;
+
 	// 自キャラの弾
 	KamataEngine::Model* modelPlayerBullet_ = nullptr;
 	// 弾
@@ -223,16 +247,34 @@ private:
 	E_DeathParticle* E_Particles_ = nullptr;
 	KamataEngine::Model* model_E_Particle_ = nullptr;
 
-	int enemyPos = 0;
+	int32_t enemyPos = 0;
 
-	int respawnTimer = 120;
+	int32_t respawnTimer = 120;
 
-	// 敵HPテクスチャハンドル
-	uint32_t enemyhpHandle_ = 0;
-	// スプライト
-	Sprite* enemyhpSprite_ = nullptr;
-	uint32_t _enemyhpHandle_ = 0;
-	Sprite* _enemyhpSprite_ = nullptr;
+	
+
+
+	#pragma region 敵の弾
+	// 敵の弾の生成
+	E_Bullet* E_Bullet_ = nullptr;
+	// 敵の弾
+	KamataEngine::Model* modelE_Bullet_ = nullptr;
+	// 弾
+	std::list<E_Bullet*> E_bullets_;
+	// 速度
+	KamataEngine::Vector3 E_B_velocity_;
+	// 弾の寿命(フレーム数)
+	// int playerBulletLifeTime = 20; // 変更可能な左辺値にするためconstを外し型をintに変更    // スペースキーを押して弾を撃つ
+	
+
+	static const int kFireInterval = 60;
+	int32_t fireTimer = 0;
+	void EnemyAttack();
+	
+	#pragma endregion
+
+
+
 #pragma endregion
 
 	
@@ -277,7 +319,7 @@ private:
 	Fade* fade_ = nullptr;
 #pragma endregion
 
-	uint32_t P_Shot_ = 0;
+	
 
 
 	float t = 0.0f;

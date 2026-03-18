@@ -6,11 +6,10 @@
 #include<list>
 #define NOMINMAX
 
-
 using namespace KamataEngine;
 using namespace MathUtility;
 
-void Enemy::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& position) 
+void Enemy::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& position)
 {
 	// NULLポイントチェック
 	assert(model);
@@ -40,6 +39,15 @@ void Enemy::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& posi
 
 void Enemy::Update() 
 {
+	/*
+	E_Fire();
+
+	if (E_bullet_)
+	{
+		E_bullet_->Update();
+	}*/
+
+
 
 	// 時間のカウンター
 	walkTimer_ += 5.0f / 60.0f; // フレームごとの時間増分
@@ -58,6 +66,13 @@ void Enemy::Update()
 
 void Enemy::Draw() 
 {
+	/*
+	if (E_bullet_)
+	{
+		E_bullet_->Draw();
+	}*/
+
+
 	if (isenemyDead_)
 	{
 		
@@ -117,6 +132,20 @@ void Enemy::OnCollition(const P_Bullet* playerBullet)
 		hp_ = 0;
 		isenemyDead_ = true;
 	}
+
+	
 }
 
 #pragma endregion
+
+
+/*
+void Enemy::E_Fire()
+{
+    E_Bullet* newE_Bullet = new E_Bullet();
+    newE_Bullet->Initialize(model_, camera_, GetWorldPosition(), velocity_);
+
+    bullets_.push_back(newE_Bullet);
+
+
+}*/
