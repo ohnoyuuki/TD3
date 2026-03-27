@@ -65,13 +65,23 @@ void Player::Update()
 			trunTimer_ = kTimeTurn;
 		}
 	}
+
+	const float kTiltAngle = 0.3f;
+	const float kReturnSpeed = 0.1f;
+
 	// 押した方向で移動ベクトルを変更(上下)
 	if (Input::GetInstance()->PushKey(DIK_W)) 
 	{
 		move.y += kCharacterSpeed;
+		worldTransform_.rotation_.z += (-kTiltAngle - worldTransform_.rotation_.z) * kReturnSpeed;
+
 	} else if (Input::GetInstance()->PushKey(DIK_S)) 
 	{
 		move.y -= kCharacterSpeed;
+		worldTransform_.rotation_.z += (kTiltAngle - worldTransform_.rotation_.z) * kReturnSpeed;
+	
+	} else {
+		worldTransform_.rotation_.z += (0.0f - worldTransform_.rotation_.z) * kReturnSpeed;
 	}
 
 	// 座標移動(ベクトルの加算)
