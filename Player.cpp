@@ -65,23 +65,13 @@ void Player::Update()
 			trunTimer_ = kTimeTurn;
 		}
 	}
-
-	const float kTiltAngle = 0.3f;//追加
-	const float kReturnSpeed = 0.1f;//追加
-
 	// 押した方向で移動ベクトルを変更(上下)
 	if (Input::GetInstance()->PushKey(DIK_W)) 
 	{
 		move.y += kCharacterSpeed;
-		worldTransform_.rotation_.z += (-kTiltAngle - worldTransform_.rotation_.z) * kReturnSpeed;
-
 	} else if (Input::GetInstance()->PushKey(DIK_S)) 
 	{
 		move.y -= kCharacterSpeed;
-		worldTransform_.rotation_.z += (kTiltAngle - worldTransform_.rotation_.z) * kReturnSpeed;
-	
-	} else {
-		worldTransform_.rotation_.z += (0.0f - worldTransform_.rotation_.z) * kReturnSpeed;
 	}
 
 	// 座標移動(ベクトルの加算)
@@ -140,7 +130,33 @@ void Player::AnimateTurn()
 	}
 }
 
+void Player::RotateX() 
+{
+	// 回転速さ[ラジアン/frame]
+	const float kRotSpeed = 0.007f;
+	// 押した方向で移動ベクトルを変更
+	if (Input::GetInstance()->PushKey(DIK_W))
+	{
+		worldTransform_.rotation_.x -= kRotSpeed;
+	} else if (Input::GetInstance()->PushKey(DIK_S))
+	{
+		worldTransform_.rotation_.x += kRotSpeed;
+	}
+}
 
+void Player::RotateZ()
+{
+	// 回転速さ[ラジアン/frame]
+	const float kRotSpeed2 = 0.01f;
+	// 押した方向で移動ベクトルを変更
+	if (Input::GetInstance()->PushKey(DIK_W))
+	{
+		worldTransform_.rotation_.z -= kRotSpeed2;
+	} else if (Input::GetInstance()->PushKey(DIK_S)) 
+	{
+		worldTransform_.rotation_.z += kRotSpeed2;
+	}
+}
 
 #pragma region プレイヤーの弾と敵の衝突
 
