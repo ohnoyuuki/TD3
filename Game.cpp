@@ -7,6 +7,123 @@
 using namespace KamataEngine;
 using namespace MathUtility;
 
+
+
+
+#pragma region 行列計算
+
+// 行列の積
+Matrix4x4 Multiply3(const Matrix4x4& m1, const Matrix4x4& m2)
+{
+	Matrix4x4 result;
+
+	result.m[0][0] = {(m1.m[0][0] * m2.m[0][0]) + (m1.m[0][1] * m2.m[1][0]) + (m1.m[0][2] * m2.m[2][0]) + (m1.m[0][3] * m2.m[3][0])};
+	result.m[0][1] = {(m1.m[0][0] * m2.m[0][1]) + (m1.m[0][1] * m2.m[1][1]) + (m1.m[0][2] * m2.m[2][1]) + (m1.m[0][3] * m2.m[3][1])};
+	result.m[0][2] = {(m1.m[0][0] * m2.m[0][2]) + (m1.m[0][1] * m2.m[1][2]) + (m1.m[0][2] * m2.m[2][2]) + (m1.m[0][3] * m2.m[3][2])};
+	result.m[0][3] = {(m1.m[0][0] * m2.m[0][3]) + (m1.m[0][1] * m2.m[1][3]) + (m1.m[0][2] * m2.m[2][3]) + (m1.m[0][3] * m2.m[3][3])};
+
+	result.m[1][0] = {(m1.m[1][0] * m2.m[0][0]) + (m1.m[1][1] * m2.m[1][0]) + (m1.m[1][2] * m2.m[2][0]) + (m1.m[1][3] * m2.m[3][0])};
+	result.m[1][1] = {(m1.m[1][0] * m2.m[0][1]) + (m1.m[1][1] * m2.m[1][1]) + (m1.m[1][2] * m2.m[2][1]) + (m1.m[1][3] * m2.m[3][1])};
+	result.m[1][2] = {(m1.m[1][0] * m2.m[0][2]) + (m1.m[1][1] * m2.m[1][2]) + (m1.m[1][2] * m2.m[2][2]) + (m1.m[1][3] * m2.m[3][2])};
+	result.m[1][3] = {(m1.m[1][0] * m2.m[0][3]) + (m1.m[1][1] * m2.m[1][3]) + (m1.m[1][2] * m2.m[2][3]) + (m1.m[1][3] * m2.m[3][3])};
+
+	result.m[2][0] = {(m1.m[2][0] * m2.m[0][0]) + (m1.m[2][1] * m2.m[1][0]) + (m1.m[2][2] * m2.m[2][0]) + (m1.m[2][3] * m2.m[3][0])};
+	result.m[2][1] = {(m1.m[2][0] * m2.m[0][1]) + (m1.m[2][1] * m2.m[1][1]) + (m1.m[2][2] * m2.m[2][1]) + (m1.m[2][3] * m2.m[3][1])};
+	result.m[2][2] = {(m1.m[2][0] * m2.m[0][2]) + (m1.m[2][1] * m2.m[1][2]) + (m1.m[2][2] * m2.m[2][2]) + (m1.m[2][3] * m2.m[3][2])};
+	result.m[2][3] = {(m1.m[2][0] * m2.m[0][3]) + (m1.m[2][1] * m2.m[1][3]) + (m1.m[2][2] * m2.m[2][3]) + (m1.m[2][3] * m2.m[3][3])};
+
+	result.m[3][0] = {(m1.m[3][0] * m2.m[0][0]) + (m1.m[3][1] * m2.m[1][0]) + (m1.m[3][2] * m2.m[2][0]) + (m1.m[3][3] * m2.m[3][0])};
+	result.m[3][1] = {(m1.m[3][0] * m2.m[0][1]) + (m1.m[3][1] * m2.m[1][1]) + (m1.m[3][2] * m2.m[2][1]) + (m1.m[3][3] * m2.m[3][1])};
+	result.m[3][2] = {(m1.m[3][0] * m2.m[0][2]) + (m1.m[3][1] * m2.m[1][2]) + (m1.m[3][2] * m2.m[2][2]) + (m1.m[3][3] * m2.m[3][2])};
+	result.m[3][3] = {(m1.m[3][0] * m2.m[0][3]) + (m1.m[3][1] * m2.m[1][3]) + (m1.m[3][2] * m2.m[2][3]) + (m1.m[3][3] * m2.m[3][3])};
+
+	return result;
+}
+
+Matrix4x4 Inverse3(const Matrix4x4& m)
+{
+	Matrix4x4 result = {};
+	float determinant =
+	    m.m[0][0] * m.m[1][1] * m.m[2][2] * m.m[3][3] + m.m[0][0] * m.m[1][2] * m.m[2][3] * m.m[3][1] + m.m[0][0] * m.m[1][3] * m.m[2][1] * m.m[3][2] - m.m[0][0] * m.m[1][3] * m.m[2][2] * m.m[3][1] -
+	    m.m[0][0] * m.m[1][2] * m.m[2][1] * m.m[3][3] - m.m[0][0] * m.m[1][1] * m.m[2][3] * m.m[3][2] - m.m[0][1] * m.m[1][0] * m.m[2][2] * m.m[3][3] - m.m[0][2] * m.m[1][0] * m.m[2][3] * m.m[3][1] -
+	    m.m[0][3] * m.m[1][0] * m.m[2][1] * m.m[3][2] + m.m[0][3] * m.m[1][0] * m.m[2][2] * m.m[3][1] + m.m[0][2] * m.m[1][0] * m.m[2][1] * m.m[3][3] + m.m[0][1] * m.m[1][0] * m.m[2][3] * m.m[3][2] +
+	    m.m[0][1] * m.m[1][2] * m.m[2][0] * m.m[3][3] + m.m[0][2] * m.m[1][3] * m.m[2][0] * m.m[3][1] + m.m[0][3] * m.m[1][1] * m.m[2][0] * m.m[3][2] - m.m[0][3] * m.m[1][2] * m.m[2][0] * m.m[3][1] -
+	    m.m[0][2] * m.m[1][1] * m.m[2][0] * m.m[3][3] - m.m[0][1] * m.m[1][3] * m.m[2][0] * m.m[3][2] - m.m[0][1] * m.m[1][2] * m.m[2][3] * m.m[3][0] - m.m[0][2] * m.m[1][3] * m.m[2][1] * m.m[3][0] -
+	    m.m[0][3] * m.m[1][1] * m.m[2][2] * m.m[3][0] + m.m[0][3] * m.m[1][2] * m.m[2][1] * m.m[3][0] + m.m[0][2] * m.m[1][1] * m.m[2][3] * m.m[3][0] + m.m[0][1] * m.m[1][3] * m.m[2][2] * m.m[3][0];
+
+	if (determinant == 0.0f)
+	{
+		return result;
+	}
+
+	float InDit = 1.0f / determinant;
+
+	result.m[0][0] = InDit * (m.m[1][1] * m.m[2][2] * m.m[3][3] + m.m[1][2] * m.m[2][3] * m.m[3][1] + m.m[1][3] * m.m[2][1] * m.m[3][2] - m.m[1][3] * m.m[2][2] * m.m[3][1] -
+	                          m.m[1][2] * m.m[2][1] * m.m[3][3] - m.m[1][1] * m.m[2][3] * m.m[3][2]);
+	result.m[0][1] = InDit * (-m.m[0][1] * m.m[2][2] * m.m[3][3] - m.m[0][2] * m.m[2][3] * m.m[3][1] - m.m[0][3] * m.m[2][1] * m.m[3][2] + m.m[0][3] * m.m[2][2] * m.m[3][1] +
+	                          m.m[0][2] * m.m[2][1] * m.m[3][3] + m.m[0][1] * m.m[2][3] * m.m[3][2]);
+	result.m[0][2] = InDit * (m.m[0][1] * m.m[1][2] * m.m[3][3] + m.m[0][2] * m.m[1][3] * m.m[3][1] + m.m[0][3] * m.m[1][1] * m.m[3][2] - m.m[0][3] * m.m[1][2] * m.m[3][1] -
+	                          m.m[0][2] * m.m[1][1] * m.m[3][3] - m.m[0][1] * m.m[1][3] * m.m[3][2]);
+	result.m[0][3] = InDit * (-m.m[0][1] * m.m[1][2] * m.m[2][3] - m.m[0][2] * m.m[1][3] * m.m[2][1] - m.m[0][3] * m.m[1][1] * m.m[2][2] + m.m[0][3] * m.m[1][2] * m.m[2][1] +
+	                          m.m[0][2] * m.m[1][1] * m.m[2][3] + m.m[0][1] * m.m[1][3] * m.m[2][2]);
+	result.m[1][0] = InDit * (-m.m[1][0] * m.m[2][2] * m.m[3][3] - m.m[1][2] * m.m[2][3] * m.m[3][0] - m.m[1][3] * m.m[2][0] * m.m[3][2] + m.m[1][3] * m.m[2][2] * m.m[3][0] +
+	                          m.m[1][2] * m.m[2][0] * m.m[3][3] + m.m[1][0] * m.m[2][3] * m.m[3][2]);
+	result.m[1][1] = InDit * (m.m[0][0] * m.m[2][2] * m.m[3][3] + m.m[0][2] * m.m[2][3] * m.m[3][0] + m.m[0][3] * m.m[2][0] * m.m[3][2] - m.m[0][3] * m.m[2][2] * m.m[3][0] -
+	                          m.m[0][2] * m.m[2][0] * m.m[3][3] - m.m[0][0] * m.m[2][3] * m.m[3][2]);
+	result.m[1][2] = InDit * (-m.m[0][0] * m.m[1][2] * m.m[3][3] - m.m[0][2] * m.m[1][3] * m.m[3][0] - m.m[0][3] * m.m[1][0] * m.m[3][2] + m.m[0][3] * m.m[1][2] * m.m[3][0] +
+	                          m.m[0][2] * m.m[1][0] * m.m[3][3] + m.m[0][0] * m.m[1][3] * m.m[3][2]);
+	result.m[1][3] = InDit * (m.m[0][0] * m.m[1][2] * m.m[2][3] + m.m[0][2] * m.m[1][3] * m.m[2][0] + m.m[0][3] * m.m[1][0] * m.m[2][2] - m.m[0][3] * m.m[1][2] * m.m[2][0] -
+	                          m.m[0][2] * m.m[1][0] * m.m[2][3] - m.m[0][0] * m.m[1][3] * m.m[2][2]);
+	result.m[2][0] = InDit * (m.m[1][0] * m.m[2][1] * m.m[3][3] + m.m[1][1] * m.m[2][3] * m.m[3][0] + m.m[1][3] * m.m[2][0] * m.m[3][1] - m.m[1][3] * m.m[2][1] * m.m[3][0] -
+	                          m.m[1][1] * m.m[2][0] * m.m[3][3] - m.m[1][0] * m.m[2][3] * m.m[3][1]);
+	result.m[2][1] = InDit * (-m.m[0][0] * m.m[2][1] * m.m[3][3] - m.m[0][1] * m.m[2][3] * m.m[3][0] - m.m[0][3] * m.m[2][0] * m.m[3][1] + m.m[0][3] * m.m[2][1] * m.m[3][0] +
+	                          m.m[0][1] * m.m[2][0] * m.m[3][3] + m.m[0][0] * m.m[2][3] * m.m[3][1]);
+	result.m[2][2] = InDit * (m.m[0][0] * m.m[1][1] * m.m[3][3] + m.m[0][1] * m.m[1][3] * m.m[3][0] + m.m[0][3] * m.m[1][0] * m.m[3][1] - m.m[0][3] * m.m[1][1] * m.m[3][0] -
+	                          m.m[0][1] * m.m[1][0] * m.m[3][3] - m.m[0][0] * m.m[1][3] * m.m[3][1]);
+	result.m[2][3] = InDit * (-m.m[0][0] * m.m[1][1] * m.m[2][3] - m.m[0][1] * m.m[1][3] * m.m[2][0] - m.m[0][3] * m.m[1][0] * m.m[2][1] + m.m[0][3] * m.m[1][1] * m.m[2][0] +
+	                          m.m[0][1] * m.m[1][0] * m.m[2][3] + m.m[0][0] * m.m[1][3] * m.m[2][1]);
+	result.m[3][0] = InDit * (-m.m[1][0] * m.m[2][1] * m.m[3][2] - m.m[1][1] * m.m[2][2] * m.m[3][0] - m.m[1][2] * m.m[2][0] * m.m[3][1] + m.m[1][2] * m.m[2][1] * m.m[3][0] +
+	                          m.m[1][1] * m.m[2][0] * m.m[3][2] + m.m[1][0] * m.m[2][2] * m.m[3][1]);
+	result.m[3][1] = InDit * (m.m[0][0] * m.m[2][1] * m.m[3][2] + m.m[0][1] * m.m[2][2] * m.m[3][0] + m.m[0][2] * m.m[2][0] * m.m[3][1] - m.m[0][2] * m.m[2][1] * m.m[3][0] -
+	                          m.m[0][1] * m.m[2][0] * m.m[3][2] - m.m[0][0] * m.m[2][2] * m.m[3][1]);
+	result.m[3][2] = InDit * (-m.m[0][0] * m.m[1][1] * m.m[3][2] - m.m[0][1] * m.m[1][2] * m.m[3][0] - m.m[0][2] * m.m[1][0] * m.m[3][1] + m.m[0][2] * m.m[1][1] * m.m[3][0] +
+	                          m.m[0][1] * m.m[1][0] * m.m[3][2] + m.m[0][0] * m.m[1][2] * m.m[3][1]);
+	result.m[3][3] = InDit * (m.m[0][0] * m.m[1][1] * m.m[2][2] + m.m[0][1] * m.m[1][2] * m.m[2][0] + m.m[0][2] * m.m[1][0] * m.m[2][1] - m.m[0][2] * m.m[1][1] * m.m[2][0] -
+	                          m.m[0][1] * m.m[1][0] * m.m[2][2] - m.m[0][0] * m.m[1][2] * m.m[2][1]);
+	return result;
+}
+
+Matrix4x4 MakeRotateMatrix3(const Vector3& rotation)
+{
+	float cosX = cosf(rotation.x);
+	float sinX = sinf(rotation.x);
+
+	float cosY = cosf(rotation.y);
+	float sinY = sinf(rotation.y);
+
+	float cosZ = cosf(rotation.z);
+	float sinZ = sinf(rotation.z);
+
+	// X回転
+	Matrix4x4 rotX = {1, 0, 0, 0, 0, cosX, sinX, 0, 0, -sinX, cosX, 0, 0, 0, 0, 1};
+
+	// Y回転
+	Matrix4x4 rotY = {cosY, 0, -sinY, 0, 0, 1, 0, 0, sinY, 0, cosY, 0, 0, 0, 0, 1};
+
+	// Z回転
+	Matrix4x4 rotZ = {cosZ, sinZ, 0, 0, -sinZ, cosZ, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+
+	// Z → X → Y の順で合成
+	Matrix4x4 result = Multiply3(Multiply3(rotZ, rotX), rotY);
+
+	return result;
+}
+
+#pragma endregion
+
+
+
+
 #pragma region
 #pragma endregion
 
@@ -25,6 +142,9 @@ void Game::Initialize()
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
 
+	worldTransformEarth_.Initialize();
+	worldTransformEarth_.translation_ = {0, -120, 0};
+
 #pragma region 天球
 
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
@@ -37,7 +157,7 @@ void Game::Initialize()
 
 	modelRecovery_ = KamataEngine::Model::CreateFromOBJ("kaifuku", true);
 	recovery_ = new Recovery();
-	KamataEngine::Vector3 recoveryPosition = {0, 10.0f, 0};
+	KamataEngine::Vector3 recoveryPosition = {0, 0, 0};
 	recovery_->Initialize(modelRecovery_, &camera_, recoveryPosition);
 
 #pragma endregion
@@ -81,6 +201,8 @@ void Game::Initialize()
 	cameraController_->SetMovableArea(cameraArea);
 
 #pragma endregion
+
+
 }
 
 
@@ -116,12 +238,26 @@ void Game::Update()
 
 #pragma endregion
 
+#ifdef _DEBUG
 	// フェード
 	fade_->Update();
 	ImGui::Text("C : Clear  ,  O : Over");
 	ImGui::Text("0(Zero) : DebugCamera ");
+#endif 	
+	
 
-	CheckAllCollisions();
+
+	worldTransformEarth_.matWorld_ = MakeAffineMatrix(worldTransformEarth_.scale_, worldTransformEarth_.rotation_, worldTransformEarth_.translation_);
+	worldTransformEarth_.TransferMatrix();
+
+
+	worldTransformEarth_.rotation_.z -= 0.001f;
+
+
+
+
+
+
 
 #pragma region UI
 
@@ -158,8 +294,12 @@ void Game::Update()
 #pragma endregion
 
 #pragma region 回復アイテム
-
-	recovery_->Update();
+	
+		recovery_->Update();
+	
+	
+	
+	
 
 #pragma endregion
 
@@ -178,7 +318,8 @@ void Game::Update()
 	switch (phase_) 
 	{
 	case Phase::kPlay:
-
+		
+		CheckAllCollisions();
 #pragma region 仮設コード
 		// ゲームクリア(仮)
 		if (Input::GetInstance()->TriggerKey(DIK_C))
@@ -190,7 +331,29 @@ void Game::Update()
 		{
 			phase_ = Phase::kDeath;
 		}
+
 #pragma endregion
+
+		if (Input::GetInstance()->TriggerKey(DIK_ESCAPE))
+		{
+			phase_ = Phase::kPose;
+		}
+		break;
+
+	case Phase::kPose:
+
+
+		ImGui::Text("T : Title  ,  ESC : Continue");
+		if (Input::GetInstance()->TriggerKey(DIK_T)) 
+		{
+			phase_ = Phase::kFadeOut3;
+		}
+		if (Input::GetInstance()->TriggerKey(DIK_ESCAPE))
+		{
+			phase_ = Phase::kPlay;
+		}
+
+
 
 		break;
 
@@ -199,7 +362,7 @@ void Game::Update()
 		// フェードアウト開始
 		phase_ = Phase::kFadeOut;
 		fade_->Start(Fade::Status::FadeOut, 1.0f);
-
+		
 		break;
 
 	case Phase::kEnemyDeath:
@@ -218,6 +381,8 @@ void Game::Update()
 			phase_ = Phase::kPlay;
 		}
 		break;
+
+
 	case Phase::kFadeOut:
 		// フェード
 		fade_->Update();
@@ -234,8 +399,21 @@ void Game::Update()
 			finishedGAME2_ = true;
 		}
 		break;
+
+	case Phase::kFadeOut3:
+		// フェード
+		fade_->Update();
+		if (fade_->IsFinished())
+		{
+			finishedGAME3_ = true;
+		}
+		break;
+
 	}
 #pragma endregion
+
+
+
 }
 
 void Game::Draw()
@@ -246,11 +424,14 @@ void Game::Draw()
 	Sprite::PreDraw(dxCommon->GetCommandList());
 
 #pragma region UI
-	_playerHPSprite_->Draw();
-	_enemyHPSprite_->Draw();
+	if (phase_ == Phase::kPlay || phase_ == Phase::kFadeIn || phase_ == Phase::kPose || phase_ == Phase::kDeath || phase_ == Phase::kEnemyDeath)
+	{
+		_playerHPSprite_->Draw();
+		_enemyHPSprite_->Draw();
 
-	playerHPSprite_->Draw();
-	enemyHPSprite_->Draw();
+		playerHPSprite_->Draw();
+		enemyHPSprite_->Draw();
+	}
 #pragma endregion
 
 	Sprite::PostDraw();
@@ -261,15 +442,17 @@ void Game::Draw()
 #pragma region 天球
 
 	modelSkydome_->Draw(worldTransform_, camera_);
-	modelEarth_->Draw(worldTransform_, camera_);
+	modelEarth_->Draw(worldTransformEarth_, camera_);
 	modelMoon_->Draw(worldTransform_, camera_);
 
 #pragma endregion
 
 #pragma region 回復アイテム
-
-	recovery_->Draw();
-
+	
+		recovery_->Draw();
+	
+		
+	
 #pragma endregion
 
 #pragma region プレイヤー
@@ -301,8 +484,10 @@ Game::~Game()
 	delete modelSkydome_;
 	delete modelEarth_;
 	delete modelMoon_;
-
+	
 	delete recovery_;
+	
+	
 
 	// プレイヤーの解放
 	delete player_;
@@ -318,7 +503,7 @@ void Game::CheckAllCollisions()
 
 	const std::list<P_Bullet*>& playerBullets = player_->GetBullets();
 	const std::list<E_Bullet*>& enemyBullets = enemy_->GetE_Bullets();
-
+	
 #pragma region[ プレイヤーの弾  <<===>>  敵 ]
 
 	AABB aabb1, aabb2;
@@ -356,13 +541,48 @@ void Game::CheckAllCollisions()
 #pragma region[ プレイヤー  <<===>>  回復アイテム ]
 
 	AABB3 aabb5, aabb6;
-	aabb5 = recovery_->GetAABB3();
-	aabb6 = player_->GetAABB3();
-	if (IsCollition3(aabb5, aabb6)) 
-	{
-		recovery_->OnCollition3(player_);
-		player_->OnCollition3(recovery_);
-	}
+	
+		aabb5 = recovery_->GetAABB3();
+		aabb6 = player_->GetAABB3();
+		if (IsCollition3(aabb5, aabb6)) 
+		{
+			recovery_->OnCollition3(player_);
+			player_->OnCollition3(recovery_);
+
+			
+		}
+	
+	
+	
+	
 
 #pragma endregion
+
+#pragma region[ プレイヤーの弾  <<===>>  敵の弾 ]
+
+	AABB4 aabb7, aabb8;
+
+	for (P_Bullet* p_bullet : playerBullets)
+	{
+		for (E_Bullet* e_bullet : enemyBullets)
+		{
+
+			aabb7 = p_bullet->GetAABB4();
+			aabb8 = e_bullet->GetAABB4();
+			if (IsCollition4(aabb7, aabb8))
+			{
+				p_bullet->OnCollition4(e_bullet);
+				e_bullet->OnCollition4(p_bullet);
+			}
+		}
+	}
+
+
+
+
+
+
+#pragma endregion
+
+
 }

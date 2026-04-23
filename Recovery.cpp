@@ -17,17 +17,27 @@ void Recovery::Initialize(Model* model, Camera* camera, Vector3& position)
 	worldTransform_.translation_ = position;
 
 	//textureHandle_ = textureHandle;
-
-	
 }
 
 void Recovery::Update() 
 { 
+
+	deathTimer_R_--;
+	if (--deathTimer_R_ <= 0)
+	{
+		isDead_recovery_ = true;
+	}
+
+
 	worldTransform_.TransferMatrix();
 }
 
 void Recovery::Draw() 
 {
+	if (isDead_recovery_)
+	{
+		return;
+	}
 	model_->Draw(worldTransform_, *camera_);
 }
 
