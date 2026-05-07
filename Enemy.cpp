@@ -11,8 +11,7 @@
 using namespace KamataEngine;
 using namespace MathUtility;
 
-void Enemy::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& position)
-{
+void Enemy::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& position) {
 	// NULLポイントチェック
 	assert(model);
 
@@ -28,8 +27,12 @@ void Enemy::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& posi
 	ApproachInitialize();
 }
 
-void Enemy::Update()
-{
+void Enemy::Update() {
+	// HPでフェーズ変更
+	if (E_hp_ < E_maxHP_ * 0.3f && phase_ != Phase::Rage) {
+		phase_ = Phase::Rage;
+	}
+
 	// キャラクターの移動ベクトル
 	// Vector3 move = {0, 0, 0};
 	// キャラクターの移動速さ
@@ -38,26 +41,18 @@ void Enemy::Update()
 #pragma region 敵の行動フェーズ
 
 	// 敵の行動フェーズ
-	switch (phase_)
-	{
+	switch (phase_) {
 	case Phase::Approach:
 	default:
 		// 移動(ベクトルを減算)
 		worldTransform_.translation_.x -= 0.2f;
-		if (worldTransform_.translation_.x < 30.0f) 
-		{
+		if (worldTransform_.translation_.x < 30.0f) {
 			phase_ = Phase::Attack;
 		}
 		break;
 	case Phase::Attack:
-
-
-
-
-
-
-		#pragma region 敵の上下移動
-
+#pragma region 敵の上下移動
+	{
 		// 時間のカウンター
 		walkTimer_ += 5.0f / 60.0f; // フレームごとの時間増分
 		// 上下に揺れるように移動
@@ -68,31 +63,42 @@ void Enemy::Update()
 		// X,Y をいじるので一旦変数に出す
 		Vector3& pos = worldTransform_.translation_;
 		pos.y = sin(walkTimer_ * 0.1f) * 10.0f;
-		
-		#pragma endregion
 
-
-
-
-
-
+#pragma endregion
 
 		// 発射タイマーカウントダウン
 		fireTimer_--;
 		// 指定時間に達した
-		if (fireTimer_ == 0) 
-		{
-			// 弾を発射
-			Fire();
+		if (fireTimer_ <= 0) {
+			// 50%の確率で撃つ
+			if (rand() % 2 == 0) {
+				Fire();
+			}
+
 			// 発射タイマーを初期化
 			fireTimer_ = kFireInterval;
+		}
+		break;
+	}
+	case Phase::Rage: {
+		// 移動スピードアップ
+		worldTransform_.translation_.x -= 0.4f;
 
-
-
-
-
+		if (worldTransform_.translation_.x < 20.0f) {
+			worldTransform_.translation_.x = 20.0f;
 		}
 
+		// 上下移動激しく
+		walkTimer_ += 10.0f / 60.0f;
+		worldTransform_.translation_.y = sin(walkTimer_ * 0.2f) * 20.0f;
+
+		// 発射間隔短くする
+		fireTimer_--;
+		if (fireTimer_ <= 0) {
+			Fire();
+			fireTimer_ = 10; // ←めっちゃ速くする
+		}
+	}
 		break;
 	}
 
@@ -101,14 +107,12 @@ void Enemy::Update()
 #pragma region 敵の攻撃
 	// Fire();
 
-	for (E_Bullet* e_bullet : e_bullets_)
-	{
+	for (E_Bullet* e_bullet : e_bullets_) {
 		e_bullet->Update();
 	}
 
-	e_bullets_.remove_if([](E_Bullet* e_bullet){
-		if (e_bullet->IsDead_EB())
-		{
+	e_bullets_.remove_if([](E_Bullet* e_bullet) {
+		if (e_bullet->IsDead_EB()) {
 			delete e_bullet;
 			return true;
 		}
@@ -123,36 +127,29 @@ void Enemy::Update()
 	worldTransform_.TransferMatrix();
 }
 
-void Enemy::Draw()
-{
-	if (isEnemyDead_)
-	{
+void Enemy::Draw() {
+	if (isEnemyDead_) {
 		return;
 	}
 
 	model_->Draw(worldTransform_, *camera_);
 
-	for (E_Bullet* e_bullet : e_bullets_)
-	{
+	for (E_Bullet* e_bullet : e_bullets_) {
 		e_bullet->Draw(*camera_);
 	}
 
-	if (E_hp_ < 0)
-	{
+	if (E_hp_ < 0) {
 		isEnemyDead_ = true;
 	}
 }
 
-Enemy::~Enemy()
-{
-	for (E_Bullet* e_bullet : e_bullets_)
-	{
+Enemy::~Enemy() {
+	for (E_Bullet* e_bullet : e_bullets_) {
 		delete e_bullet;
 	}
 }
 
-void Enemy::Fire() 
-{
+void Enemy::Fire() {
 	// 弾の速度
 	const float kBulletSpeed = 1.0f;
 	KamataEngine::Vector3 velocity(0, 0, kBulletSpeed);
@@ -164,16 +161,15 @@ void Enemy::Fire()
 	e_bullets_.push_back(new_e_Bullet);
 }
 
-void Enemy::ApproachInitialize()
-{
+void Enemy::ApproachInitialize() {
 	// 発射タイマーを初期化
 	fireTimer_ = kFireInterval;
 }
 
+
 #pragma region 衝突判定 [ プレイヤーの弾  <<===>>  敵 ]
 
-KamataEngine::Vector3 Enemy::GetWorldPosition()
-{
+KamataEngine::Vector3 Enemy::GetWorldPosition() {
 	// ワールド座標を入れる変数
 	KamataEngine::Vector3 worldPos;
 	// ワールド行列の平行移動成分を取得(ワールド座標)
@@ -185,8 +181,7 @@ KamataEngine::Vector3 Enemy::GetWorldPosition()
 }
 
 #pragma endregion
-AABB Enemy::GetAABB()
-{
+AABB Enemy::GetAABB() {
 	KamataEngine::Vector3 worldPos = GetWorldPosition();
 
 	AABB aabb;
@@ -198,12 +193,10 @@ AABB Enemy::GetAABB()
 }
 
 // 衝突応答
-void Enemy::OnCollition(const P_Bullet* playerBullet)
-{
+void Enemy::OnCollition(const P_Bullet* playerBullet) {
 	(void)playerBullet;
 	E_hp_ -= 100;
-	if (E_hp_ <= 0) 
-	{
+	if (E_hp_ <= 0) {
 		E_hp_ = 0;
 		isEnemyDead_ = true;
 	}
