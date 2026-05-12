@@ -13,6 +13,8 @@
 
 #include "E_Bullet.h"
 
+
+class Player;
 class P_Bullet;
 class Enemy 
 {
