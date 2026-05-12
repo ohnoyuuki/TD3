@@ -1,5 +1,5 @@
 #include "Enemy.h"
-
+#include"Player.h"
 #include <algorithm>
 #include <cassert>
 #include <list>
@@ -11,7 +11,7 @@
 using namespace KamataEngine;
 using namespace MathUtility;
 
-void Enemy::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& position) {
+void Enemy::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& position,Player* player) {
 	// NULLポイントチェック
 	assert(model);
 
@@ -23,6 +23,8 @@ void Enemy::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& posi
 	worldTransform_.rotation_.y = std::numbers::pi_v<float> / -2.0f;
 
 	camera_ = camera;
+
+	player_ = player;
 
 	ApproachInitialize();
 }
@@ -149,10 +151,38 @@ Enemy::~Enemy() {
 	}
 }
 
-void Enemy::Fire() {
+void Enemy::Fire() 
+{
 	// 弾の速度
 	const float kBulletSpeed = 1.0f;
-	KamataEngine::Vector3 velocity(0, 0, kBulletSpeed);
+
+	//KamataEngine::Vector3 velocity(0, 0, kBulletSpeed);
+
+
+	// 敵位置
+	Vector3 enemyPos = worldTransform_.translation_;
+
+	// プレイヤー位置
+	Vector3 playerPos = player_->GetWorldPosition();
+	
+	// プレイヤー方向
+	Vector3 velocity;
+
+	velocity.x = playerPos.x - enemyPos.x;
+	velocity.y = playerPos.y - enemyPos.y;
+	velocity.z = playerPos.z - enemyPos.z;
+
+	// 正規化
+	float length = sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
+
+	velocity.x /= length;
+	velocity.y /= length;
+	velocity.z /= length;
+
+	// スピード掛ける
+	velocity.x *= kBulletSpeed;
+	velocity.y *= kBulletSpeed;
+	velocity.z *= kBulletSpeed;
 
 	// 弾を生成し、初期化
 	E_Bullet* new_e_Bullet = new E_Bullet();

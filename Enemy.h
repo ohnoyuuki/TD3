@@ -24,7 +24,7 @@ public:
 
 #pragma region 基本構成
 	// 初期化
-	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, KamataEngine::Vector3& position);
+	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, KamataEngine::Vector3& position,Player*player );
 
 	// 更新
 	void Update();
@@ -108,6 +108,7 @@ private:
 	// 発射タイマー
 	int32_t fireTimer_ = 0;
 
-
 	float walkTimer_ = 0;
+
+	Player* player_ = nullptr;
 };

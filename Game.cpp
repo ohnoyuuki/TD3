@@ -180,7 +180,7 @@ void Game::Initialize()
 	enemy_ = new Enemy();
 	// 敵の初期化
 	KamataEngine::Vector3 enemyPosition = {40, 0, 0};
-	enemy_->Initialize(modelEnemy_, &camera_, enemyPosition);
+	enemy_->Initialize(modelEnemy_, &camera_, enemyPosition,player_);
 #pragma endregion
 
 #pragma region カメラ関係
