@@ -97,6 +97,39 @@ void Enemy::Update() {
 		// 発射間隔短くする
 		fireTimer_--;
 		if (fireTimer_ <= 0) {
+			// プレイヤー方向
+			Vector3 enemyPos = worldTransform_.translation_;
+			Vector3 playerPos = player_->GetWorldPosition();
+
+			 Vector3 velocity;
+
+			  velocity.x = playerPos.x - enemyPos.x;
+			 velocity.y = playerPos.y - enemyPos.y;
+			 velocity.z = playerPos.z - enemyPos.z;
+
+			  // ベクトルの長さ
+			 float length = sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
+
+			 // 正規化
+			 velocity.x /= length;
+			 velocity.y /= length;
+			 velocity.z /= length;
+
+			  // 弾速
+			 const float kBulletSpeed = 1.0f;
+
+			  velocity.x *= kBulletSpeed;
+			 velocity.y *= kBulletSpeed;
+			 velocity.z *= kBulletSpeed;
+
+			 // 弾生成
+			 E_Bullet* new_e_Bullet = new E_Bullet();
+
+			   new_e_Bullet->Initialize(model_, worldTransform_.translation_, velocity);
+
+			 e_bullets_.push_back(new_e_Bullet);
+
+
 			Fire();
 			fireTimer_ = 10; // ←めっちゃ速くする
 		}

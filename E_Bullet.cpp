@@ -27,11 +27,18 @@ void E_Bullet::Update()
 		isDead_eb_ = true;
 	}
 
-	// 弾の速度(X軸方向)
-	EB_velocity_.x = 1.0f;
+		// 座標を移動
+	worldTransform_.translation_.x += EB_velocity_.x;
+	worldTransform_.translation_.y += EB_velocity_.y;
+	worldTransform_.translation_.z += EB_velocity_.z;
 
-	// 座標を移動させる (1フレーム分の移動量)
-	worldTransform_.translation_.x -= EB_velocity_.x;
+	//// 弾の速度(X軸方向)
+	//EB_velocity_.x = 1.0f;
+
+	//// 座標を移動させる (1フレーム分の移動量)
+	//worldTransform_.translation_.x -= EB_velocity_.x;
+
+
 
 	// アフィン変換行列
 	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
