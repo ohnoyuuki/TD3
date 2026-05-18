@@ -13,8 +13,6 @@
 
 #include "E_Bullet.h"
 
-
-class Player;
 class P_Bullet;
 class Enemy 
 {
@@ -24,7 +22,7 @@ public:
 
 #pragma region 基本構成
 	// 初期化
-	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, KamataEngine::Vector3& position,Player*player );
+	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, KamataEngine::Vector3& position, Player* player);
 
 	// 更新
 	void Update();
@@ -49,8 +47,11 @@ public:
 		Approach,
 		Attack,
 		Rage, // HP低いとき
+		Destroyed,
 	};
 	Phase phase_ = Phase::Approach;
+
+	uint32_t clearTimer = 0;
 
 #pragma endregion
 
@@ -108,7 +109,12 @@ private:
 	// 発射タイマー
 	int32_t fireTimer_ = 0;
 
+
 	float walkTimer_ = 0;
 
 	Player* player_ = nullptr;
+
+	// 音
+	// uint32_t E_V_Handle_ = 0;
+	// uint32_t E_Voice_ = 0;
 };

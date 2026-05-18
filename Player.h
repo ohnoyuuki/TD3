@@ -1,11 +1,11 @@
 #pragma once
 #include "KamataEngine.h"
-
+#define NOMINMAX
 #include <algorithm>
 #include <cassert>
 #include <list>
 #include <numbers>
-#define NOMINMAX
+
 #include "MyMath.h"
 #include "math.h"
 #include <cmath>
@@ -55,7 +55,21 @@ public:
 	bool IsDead() const { return isDead_; }
 	// デスフラグ
 	bool isDead_ = false;
+	
+	
+	//回復アイテムの使用状態
+	bool canUseRecovery = true;
+	uint32_t recoveryCount = 3;
 
+	// 行動フェーズ
+	enum class Phase
+	{
+		Approach,
+		Attack,
+		Destroyed,
+	};
+	Phase phase_ = Phase::Approach;
+	uint32_t overTimer = 0;
 #pragma endregion
 
 #pragma region 衝突判定 [ プレイヤー  <<===>>  敵の弾 ]
@@ -106,7 +120,19 @@ private:
 	int32_t maxHP_ = 10000;
 	int32_t hp_ = maxHP_;
 
+	
+
+
 	// マウスの切り替え
 	uint32_t OFF_Mouse = true;
 	uint32_t ON_Mouse = false;
+
+
+	//弾の発射音
+	//uint32_t P_shotHandle_ = 0;
+	//uint32_t P_shotSound_ = 0;
+
+
+
+
 };

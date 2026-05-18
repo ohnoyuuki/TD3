@@ -1,5 +1,6 @@
 #include"Player.h"
 
+
 #include <algorithm>
 #include <cassert>
 #include <list>
@@ -146,11 +147,46 @@ void Player::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& pos
 
 	// シングルトンインスタンスを取得する
 	input_ = KamataEngine::Input::GetInstance();
+
+
+
+
+	//効果音ラボ 戦闘[2] ショット(ノーマル弾)
+	//P_shotHandle_ = Audio::GetInstance()->LoadWave("Sounds/sound/Shot.mp3");
+
+
 }
 
 void Player::Update() 
 {
-	Attack();
+	
+
+
+	switch (phase_)
+	{ 
+	case Phase::Approach:
+	{
+
+
+
+		// 移動(ベクトルを減算)
+		worldTransform_.translation_.x += 0.2f;
+
+		if (worldTransform_.translation_.x > -20.0f)
+		{
+			phase_ = Phase::Attack;
+		}
+
+
+		break;
+	}
+		
+
+	case Phase::Attack:
+	{
+
+#pragma region プレイヤーの行動
+Attack();
 #pragma region プレイヤーの移動
 
 	// キャラクターの移動ベクトル
@@ -287,6 +323,69 @@ void Player::Update()
 	// 座標移動(ベクトルの加算)
 	worldTransform_.translation_ += move;
 
+	//右クリックで回避
+	if (Input::GetInstance()->IsPressMouse(1))
+	{
+		worldTransform_.translation_ += move * 5;
+	}
+
+#pragma region 回復
+	
+
+	if (hp_ > maxHP_)
+	{
+		hp_ = maxHP_;
+	}
+	
+	if (Input::GetInstance()->TriggerKey(DIK_R) && canUseRecovery == 1)
+	{
+		hp_ += 10000;
+		recoveryCount -= 1;
+	}
+
+	if (recoveryCount == 0)
+	{
+		canUseRecovery = false;
+	}
+
+
+
+#pragma endregion
+
+	#pragma endregion
+		if (hp_ <= 0) 
+		{
+			/// isEnemyDead_ = true;
+			phase_ = Phase::Destroyed;
+		}
+		break;
+	}
+
+	case Phase::Destroyed:
+	{
+
+		
+		worldTransform_.translation_.y -= 0.2f;
+		worldTransform_.rotation_.z += 0.001f;
+		worldTransform_.rotation_.x += 0.2f;
+
+		overTimer += 10;
+		if (overTimer == 1000)
+		{
+			isDead_ = true;
+		}
+
+		break;
+	}
+
+	}
+
+
+
+
+
+
+
 	// 行列更新
 	worldTransform3DReticle_.matWorld_ = MakeAffineMatrix(worldTransform3DReticle_.scale_, worldTransform3DReticle_.rotation_, worldTransform3DReticle_.translation_);
 	worldTransform3DReticle_.TransferMatrix();
@@ -299,10 +398,11 @@ void Player::Update()
 
 void Player::Draw() 
 {
+	/*
 	if (isDead_) 
 	{
 		return;
-	}
+	}*/
 
 	model_->Draw(worldTransform_, *camera_);
 
@@ -311,7 +411,18 @@ void Player::Draw()
 		p_bullet->Draw(*camera_);
 	}
 
-	modelCursor_->Draw(worldTransform3DReticle_, *camera_);
+	
+
+
+	if (phase_ == Phase::Attack)
+	{
+		modelCursor_->Draw(worldTransform3DReticle_, *camera_);
+	}
+	
+		
+
+
+
 }
 
 Player::~Player() 
@@ -359,6 +470,7 @@ void Player::Attack()
 {
 	if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0))
 	{
+		//P_shotSound_ = Audio::GetInstance()->PlayWave(P_shotHandle_, true);
 
 		const float kBulletSpeed = 1.0f;
 
@@ -409,12 +521,13 @@ AABB2 Player::GetAABB2()
 void Player::OnCollition2(const E_Bullet* enemyBullet)
 {
 	(void)enemyBullet;
-	hp_ -= 100;
+	hp_ -= 500;
+	/*
 	if (hp_ <= 0) 
 	{
 		hp_ = 0;
 		isDead_ = true;
-	}
+	}*/
 }
 #pragma endregion
 

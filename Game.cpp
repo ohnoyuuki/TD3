@@ -3,7 +3,6 @@
 #include "MyMath.h"
 #include <random>
 
-
 using namespace KamataEngine;
 using namespace MathUtility;
 
@@ -129,6 +128,9 @@ Matrix4x4 MakeRotateMatrix3(const Vector3& rotation)
 
 void Game::Initialize()
 {
+	
+
+
 
 #pragma region フェーズ・フェード
 	// フェーズインから開始
@@ -143,7 +145,7 @@ void Game::Initialize()
 	worldTransform_.Initialize();
 
 	worldTransformEarth_.Initialize();
-	worldTransformEarth_.translation_ = {0, -120, 0};
+	worldTransformEarth_.translation_ = {0, -350, 100};
 
 #pragma region 天球
 
@@ -156,9 +158,26 @@ void Game::Initialize()
 #pragma region 回復アイテム
 
 	modelRecovery_ = KamataEngine::Model::CreateFromOBJ("kaifuku", true);
+
+
+
+
 	recovery_ = new Recovery();
-	KamataEngine::Vector3 recoveryPosition = {0, 0, 0};
+	KamataEngine::Vector3 recoveryPosition = {-35, 17, 0};
 	recovery_->Initialize(modelRecovery_, &camera_, recoveryPosition);
+
+
+	recovery2_ = new Recovery();
+	KamataEngine::Vector3 recoveryPosition2 = {-31, 17, 0};
+	recovery2_->Initialize(modelRecovery_, &camera_, recoveryPosition2);
+
+
+	recovery3_ = new Recovery();
+	KamataEngine::Vector3 recoveryPosition3 = {-27, 17, 0};
+	recovery3_->Initialize(modelRecovery_, &camera_, recoveryPosition3);
+
+
+
 
 #pragma endregion
 
@@ -169,7 +188,7 @@ void Game::Initialize()
 	// プレイヤーの生成
 	player_ = new Player();
 	// プレイヤーの初期化
-	KamataEngine::Vector3 playerPosition = {-20, 0, 0};
+	KamataEngine::Vector3 playerPosition = {-40, 0, 0};
 	player_->Initialize(modelPlayer_, &camera_, playerPosition);
 
 #pragma endregion
@@ -180,7 +199,7 @@ void Game::Initialize()
 	enemy_ = new Enemy();
 	// 敵の初期化
 	KamataEngine::Vector3 enemyPosition = {40, 0, 0};
-	enemy_->Initialize(modelEnemy_, &camera_, enemyPosition,player_);
+	enemy_->Initialize(modelEnemy_, &camera_, enemyPosition, player_);
 #pragma endregion
 
 #pragma region カメラ関係
@@ -241,8 +260,8 @@ void Game::Update()
 #ifdef _DEBUG
 	// フェード
 	fade_->Update();
-	ImGui::Text("C : Clear  ,  O : Over");
-	ImGui::Text("0(Zero) : DebugCamera ");
+	//ImGui::Text("C : Clear  ,  O : Over");
+	//ImGui::Text("0(Zero) : DebugCamera ");
 #endif 	
 	
 
@@ -251,7 +270,7 @@ void Game::Update()
 	worldTransformEarth_.TransferMatrix();
 
 
-	worldTransformEarth_.rotation_.z -= 0.001f;
+	worldTransformEarth_.rotation_.z -= 0.0001f;
 
 
 
@@ -260,6 +279,36 @@ void Game::Update()
 
 
 #pragma region UI
+
+
+	// ESCのスプライト
+	ESC_Handle_ = TextureManager::Load("UI/ESC.png");
+	ESC_Sprite_ = KamataEngine::Sprite::Create(ESC_Handle_, {10, 100});
+
+	ESC_Handle_2 = TextureManager::Load("UI/Pushed_ESC.png");
+	ESC_Sprite_2 = KamataEngine::Sprite::Create(ESC_Handle_2, {10, 100});
+
+
+
+
+
+	PoseUI_Handle_ = TextureManager::Load("UI/Pose_UI.png");
+	PoseUI_Sprite_ = KamataEngine::Sprite::Create(PoseUI_Handle_, {448, 164});
+
+	PoseUI_Handle_2 = TextureManager::Load("UI/Pushed_Pose_UI.png");
+	PoseUI_Sprite_2 = KamataEngine::Sprite::Create(PoseUI_Handle_2, {448, 164});
+
+
+
+	PoseUI2_Handle_ = TextureManager::Load("UI/Pose_UI_2.png");
+	PoseUI2_Sprite_ = KamataEngine::Sprite::Create(PoseUI2_Handle_, {448, 364});
+
+	PoseUI2_Handle_2 = TextureManager::Load("UI/Pushed_Pose_UI_2.png");
+	PoseUI2_Sprite_2 = KamataEngine::Sprite::Create(PoseUI2_Handle_2, {448, 364});
+	
+
+
+
 
 	// enemyHPのスプライト
 	enemyHPHandle_ = TextureManager::Load("Sprits/Ehp.png");
@@ -293,25 +342,55 @@ void Game::Update()
 
 #pragma endregion
 
-#pragma region 回復アイテム
+
+	//ポーズ画面では、プレイヤー、敵、回復アイテムの動作が停止する
+	if (gameActive_)
+	{
+		#pragma region 回復アイテム
+	
+
 	
 		recovery_->Update();
 	
+		recovery2_->Update();
+	
+		recovery3_->Update();
 	
 	
-	
+		if (Input::GetInstance()->TriggerKey(DIK_R))
+		{
+		    recovery = false;
+		    R_count++;
+	    }
 
-#pragma endregion
+		if (Input::GetInstance()->TriggerKey(DIK_R) && R_count == 2) 
+		{
+		    recovery2 = false;
+		    R_count++;
+	    }
 
-#pragma region プレイヤー
+		if (Input::GetInstance()->TriggerKey(DIK_R) && R_count == 4) 
+		{
+		    recovery3 = false;
+		    R_count++;
+	    }
+
+
+		#pragma endregion
+
+		#pragma region プレイヤー
 	player_->Update();
 	player_->RotateX();
 	player_->RotateZ();
-#pragma endregion
+		#pragma endregion
 
-#pragma region 敵
-	enemy_->Update();
+		#pragma region 敵
+		enemy_->Update();
 #pragma endregion
+	}
+
+
+
 
 #pragma region フェーズ
 
@@ -320,6 +399,7 @@ void Game::Update()
 	case Phase::kPlay:
 		
 		CheckAllCollisions();
+
 #pragma region 仮設コード
 		// ゲームクリア(仮)
 		if (Input::GetInstance()->TriggerKey(DIK_C))
@@ -334,26 +414,49 @@ void Game::Update()
 
 #pragma endregion
 
+
 		if (Input::GetInstance()->TriggerKey(DIK_ESCAPE))
 		{
 			phase_ = Phase::kPose;
 		}
+
+
+		// ゲームプレイフェーズの処理
+		if (player_->IsDead() == true)
+		{
+			// デス演出フェーズに切り替え
+			phase_ = Phase::kDeath;
+		}	
+
+
+		if (enemy_->IsEnemyDead() == true)
+		{
+			// デス演出フェーズに切り替え
+			phase_ = Phase::kEnemyDeath;
+		}	
+
+
 		break;
 
 	case Phase::kPose:
 
 
-		ImGui::Text("T : Title  ,  ESC : Continue");
+		gameActive_ = false;
+
+
+		if (Input::GetInstance()->TriggerKey(DIK_ESCAPE))
+		{
+			phase_ = Phase::kPlay;
+			gameActive_ = true;
+		}
+
+		//ImGui::Text("T : Title  ,  ESC : Continue");
 		if (Input::GetInstance()->TriggerKey(DIK_T)) 
 		{
 			phase_ = Phase::kFadeOut3;
 		}
-		if (Input::GetInstance()->TriggerKey(DIK_ESCAPE))
-		{
-			phase_ = Phase::kPlay;
-		}
-
-
+		
+		
 
 		break;
 
@@ -418,6 +521,7 @@ void Game::Update()
 
 void Game::Draw()
 {
+
 	// DirectXCommonインスタンスの取得
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 	// スプライト
@@ -426,13 +530,43 @@ void Game::Draw()
 #pragma region UI
 	if (phase_ == Phase::kPlay || phase_ == Phase::kFadeIn || phase_ == Phase::kPose || phase_ == Phase::kDeath || phase_ == Phase::kEnemyDeath)
 	{
+		ESC_Sprite_->Draw();
+
+		if (Input::GetInstance()->PushKey(DIK_ESCAPE)) 
+		{
+			ESC_Sprite_2->Draw();
+		}
+
+
 		_playerHPSprite_->Draw();
 		_enemyHPSprite_->Draw();
 
 		playerHPSprite_->Draw();
 		enemyHPSprite_->Draw();
 	}
+
+	// ポーズ画面
+	if (phase_ == Phase::kPose)
+	{
+		PoseUI_Sprite_->Draw();
+		PoseUI2_Sprite_->Draw();
+		
+		if (Input::GetInstance()->PushKey(DIK_ESCAPE)) 
+		{
+			PoseUI_Sprite_2->Draw();
+		}
+
+		if (Input::GetInstance()->PushKey(DIK_T)) 
+		{
+			PoseUI2_Sprite_2->Draw();
+		}
+	}
+
+
+
 #pragma endregion
+
+
 
 	Sprite::PostDraw();
 
@@ -449,9 +583,21 @@ void Game::Draw()
 
 #pragma region 回復アイテム
 	
-		recovery_->Draw();
 	
+	if (recovery)
+	{
+		recovery_->Draw();
+	}
+
+	if (recovery2)
+	{
+		recovery2_->Draw();
+	}
 		
+	if (recovery3)
+	{
+		recovery3_->Draw();
+	}
 	
 #pragma endregion
 
@@ -473,6 +619,15 @@ Game::~Game()
 
 #pragma region UI
 
+	delete ESC_Sprite_;
+	delete ESC_Sprite_2;
+
+	delete PoseUI_Sprite_;
+	delete PoseUI_Sprite_2;
+
+	delete PoseUI2_Sprite_;
+	delete PoseUI2_Sprite_2;
+
 	delete playerHPSprite_;
 	delete _playerHPSprite_;
 
@@ -486,8 +641,8 @@ Game::~Game()
 	delete modelMoon_;
 	
 	delete recovery_;
-	
-	
+	delete recovery2_;
+	delete recovery3_;
 
 	// プレイヤーの解放
 	delete player_;

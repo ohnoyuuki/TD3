@@ -11,7 +11,7 @@
 using namespace KamataEngine;
 using namespace MathUtility;
 
-void Enemy::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& position,Player* player) {
+void Enemy::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& position, Player* player) {
 	// NULLポイントチェック
 	assert(model);
 
@@ -26,35 +26,60 @@ void Enemy::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& posi
 
 	player_ = player;
 
+
 	ApproachInitialize();
+
+
+
+	//効果音ラボ  戦闘[1] ドラゴンの鳴き声1 恐竜や怪獣の声にも使える
+	// E_VHandle_ = Audio::GetInstance()->LoadWave("Sounds/sound/Dragon's_Roar1.mp3");
+
+
 }
 
-void Enemy::Update() {
-	// HPでフェーズ変更
-	if (E_hp_ < E_maxHP_ * 0.3f && phase_ != Phase::Rage) {
-		phase_ = Phase::Rage;
-	}
-
+void Enemy::Update()
+{
 	// キャラクターの移動ベクトル
 	// Vector3 move = {0, 0, 0};
 	// キャラクターの移動速さ
 	// const float kCharacterSpeed = 0.2f;
 
+
+
+	#ifdef _DEBUG
+	// デバッグ用
+	if (Input::GetInstance()->TriggerKey(DIK_J)) 
+	{
+		E_hp_ = 0;
+	}
+	#endif
+
 #pragma region 敵の行動フェーズ
 
+
+	
+	
+
+
 	// 敵の行動フェーズ
-	switch (phase_) {
+	switch (phase_)
+	{
 	case Phase::Approach:
+		{
 	default:
 		// 移動(ベクトルを減算)
 		worldTransform_.translation_.x -= 0.2f;
-		if (worldTransform_.translation_.x < 30.0f) {
+		if (worldTransform_.translation_.x < 30.0f) 
+		{
 			phase_ = Phase::Attack;
 		}
 		break;
-	case Phase::Attack:
-#pragma region 敵の上下移動
+		}
+	case Phase::Attack: 
 	{
+
+#pragma region 敵の上下移動
+
 		// 時間のカウンター
 		walkTimer_ += 5.0f / 60.0f; // フレームごとの時間増分
 		// 上下に揺れるように移動
@@ -71,22 +96,36 @@ void Enemy::Update() {
 		// 発射タイマーカウントダウン
 		fireTimer_--;
 		// 指定時間に達した
-		if (fireTimer_ <= 0) {
+		if (fireTimer_ == 0)
+		{
+			// 弾を発射
 			// 50%の確率で撃つ
-			if (rand() % 2 == 0) {
+			if (rand() % 2 == 0) 
+			{
 				Fire();
 			}
-
 			// 発射タイマーを初期化
 			fireTimer_ = kFireInterval;
 		}
+
+
+		// HPでフェーズ変更
+		if (E_hp_ < E_maxHP_ * 0.3f && phase_ != Phase::Rage)
+		{
+			phase_ = Phase::Rage;
+		}
+
 		break;
 	}
-	case Phase::Rage: {
+		
+	case Phase::Rage:
+		{
+
 		// 移動スピードアップ
 		worldTransform_.translation_.x -= 0.4f;
 
-		if (worldTransform_.translation_.x < 20.0f) {
+		if (worldTransform_.translation_.x < 20.0f)
+		{
 			worldTransform_.translation_.x = 20.0f;
 		}
 
@@ -94,47 +133,88 @@ void Enemy::Update() {
 		walkTimer_ += 10.0f / 60.0f;
 		worldTransform_.translation_.y = sin(walkTimer_ * 0.2f) * 20.0f;
 
+
 		// 発射間隔短くする
 		fireTimer_--;
-		if (fireTimer_ <= 0) {
+		if (fireTimer_ <= 0) 
+		{
+
+			///////////////////////////////////////////
+
 			// プレイヤー方向
 			Vector3 enemyPos = worldTransform_.translation_;
 			Vector3 playerPos = player_->GetWorldPosition();
 
-			 Vector3 velocity;
+			Vector3 velocity;
 
-			  velocity.x = playerPos.x - enemyPos.x;
-			 velocity.y = playerPos.y - enemyPos.y;
-			 velocity.z = playerPos.z - enemyPos.z;
+			velocity.x = playerPos.x - enemyPos.x;
+			velocity.y = playerPos.y - enemyPos.y;
+			velocity.z = playerPos.z - enemyPos.z;
 
-			  // ベクトルの長さ
-			 float length = sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
+			// ベクトルの長さ
+			float length = sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
 
-			 // 正規化
-			 velocity.x /= length;
-			 velocity.y /= length;
-			 velocity.z /= length;
+			// 正規化
+			velocity.x /= length;
+			velocity.y /= length;
+			velocity.z /= length;
 
-			  // 弾速
-			 const float kBulletSpeed = 1.0f;
+			// 弾速
+			const float kBulletSpeed = 1.0f;
 
-			  velocity.x *= kBulletSpeed;
-			 velocity.y *= kBulletSpeed;
-			 velocity.z *= kBulletSpeed;
+			velocity.x *= kBulletSpeed;
+			velocity.y *= kBulletSpeed;
+			velocity.z *= kBulletSpeed;
 
-			 // 弾生成
-			 E_Bullet* new_e_Bullet = new E_Bullet();
+			// 弾生成
+			E_Bullet* new_e_Bullet = new E_Bullet();
 
-			   new_e_Bullet->Initialize(model_, worldTransform_.translation_, velocity);
+			new_e_Bullet->Initialize(model_, worldTransform_.translation_, velocity);
 
-			 e_bullets_.push_back(new_e_Bullet);
+			e_bullets_.push_back(new_e_Bullet);
+
+			/////////////////////////////////////////////////////////////
+
+
+
+
 
 
 			Fire();
 			fireTimer_ = 10; // ←めっちゃ速くする
 		}
-	}
+
+
+		
+		if (E_hp_ <= 0)
+		{
+			/// isEnemyDead_ = true;
+			phase_ = Phase::Destroyed;
+			
+		}
+		
+		
+
 		break;
+		}
+	case Phase::Destroyed:
+		{
+
+		
+		worldTransform_.translation_.y -= 0.2f;
+		worldTransform_.rotation_.z += 0.001f;
+		worldTransform_.rotation_.x += 0.2f;
+
+		clearTimer += 10;
+
+		if (clearTimer==1000)
+		{
+			isEnemyDead_ = true;
+		}
+
+		break;
+		}
+		    
 	}
 
 #pragma endregion
@@ -142,12 +222,14 @@ void Enemy::Update() {
 #pragma region 敵の攻撃
 	// Fire();
 
-	for (E_Bullet* e_bullet : e_bullets_) {
+	for (E_Bullet* e_bullet : e_bullets_)
+	{
 		e_bullet->Update();
 	}
 
-	e_bullets_.remove_if([](E_Bullet* e_bullet) {
-		if (e_bullet->IsDead_EB()) {
+	e_bullets_.remove_if([](E_Bullet* e_bullet){
+		if (e_bullet->IsDead_EB())
+		{
 			delete e_bullet;
 			return true;
 		}
@@ -156,48 +238,67 @@ void Enemy::Update() {
 
 #pragma endregion
 
+	
+	
+
 	// アフィン変換行列
 	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix();
 }
 
-void Enemy::Draw() {
-	if (isEnemyDead_) {
-		return;
-	}
+void Enemy::Draw()
+{
+	//if (isEnemyDead_)
+	//{
+	//	return;
+	//}
 
 	model_->Draw(worldTransform_, *camera_);
 
-	for (E_Bullet* e_bullet : e_bullets_) {
+	for (E_Bullet* e_bullet : e_bullets_)
+	{
 		e_bullet->Draw(*camera_);
 	}
 
-	if (E_hp_ < 0) {
-		isEnemyDead_ = true;
-	}
+	
 }
 
-Enemy::~Enemy() {
-	for (E_Bullet* e_bullet : e_bullets_) {
+Enemy::~Enemy()
+{
+	for (E_Bullet* e_bullet : e_bullets_)
+	{
 		delete e_bullet;
 	}
 }
 
 void Enemy::Fire() 
 {
+	/*
+	// 弾の速度
+	const float kBulletSpeed = 1.0f;
+	KamataEngine::Vector3 velocity(0, 0, kBulletSpeed);
+
+	// 弾を生成し、初期化
+	E_Bullet* new_e_Bullet = new E_Bullet();
+	new_e_Bullet->Initialize(model_, worldTransform_.translation_, velocity);
+	// 弾を登録する
+	e_bullets_.push_back(new_e_Bullet);
+*/
+
+
+	/////////////
 	// 弾の速度
 	const float kBulletSpeed = 1.0f;
 
-	//KamataEngine::Vector3 velocity(0, 0, kBulletSpeed);
-
+	// KamataEngine::Vector3 velocity(0, 0, kBulletSpeed);
 
 	// 敵位置
 	Vector3 enemyPos = worldTransform_.translation_;
 
 	// プレイヤー位置
 	Vector3 playerPos = player_->GetWorldPosition();
-	
+
 	// プレイヤー方向
 	Vector3 velocity;
 
@@ -222,17 +323,19 @@ void Enemy::Fire()
 	new_e_Bullet->Initialize(model_, worldTransform_.translation_, velocity);
 	// 弾を登録する
 	e_bullets_.push_back(new_e_Bullet);
+	/////////////
 }
 
-void Enemy::ApproachInitialize() {
+void Enemy::ApproachInitialize()
+{
 	// 発射タイマーを初期化
 	fireTimer_ = kFireInterval;
 }
 
-
 #pragma region 衝突判定 [ プレイヤーの弾  <<===>>  敵 ]
 
-KamataEngine::Vector3 Enemy::GetWorldPosition() {
+KamataEngine::Vector3 Enemy::GetWorldPosition()
+{
 	// ワールド座標を入れる変数
 	KamataEngine::Vector3 worldPos;
 	// ワールド行列の平行移動成分を取得(ワールド座標)
@@ -244,7 +347,8 @@ KamataEngine::Vector3 Enemy::GetWorldPosition() {
 }
 
 #pragma endregion
-AABB Enemy::GetAABB() {
+AABB Enemy::GetAABB()
+{
 	KamataEngine::Vector3 worldPos = GetWorldPosition();
 
 	AABB aabb;
@@ -256,11 +360,14 @@ AABB Enemy::GetAABB() {
 }
 
 // 衝突応答
-void Enemy::OnCollition(const P_Bullet* playerBullet) {
+void Enemy::OnCollition(const P_Bullet* playerBullet)
+{
 	(void)playerBullet;
 	E_hp_ -= 100;
-	if (E_hp_ <= 0) {
+	if (E_hp_ <= 0) 
+	{
 		E_hp_ = 0;
 		isEnemyDead_ = true;
+		//phase_ = Phase::Destroyed;
 	}
 }

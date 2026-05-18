@@ -20,24 +20,26 @@ void E_Bullet::Initialize(KamataEngine::Model* model, const KamataEngine::Vector
 
 void E_Bullet::Update()
 {
-	// 弾の速度(X軸方向)
-	// PB_velocity_.x = 1.0f;
+	// 弾の寿命
 	if (--deathTimer_E_ <= 0)
 	{
 		isDead_eb_ = true;
 	}
 
-		// 座標を移動
+
+
+	// 弾の速度(X軸方向)
+	//EB_velocity_.x -= 1.0f;
+	
+	// 座標を移動させる (1フレーム分の移動量)
+	//worldTransform_.translation_.x -= EB_velocity_.x;
+	
+
+	/////////////
 	worldTransform_.translation_.x += EB_velocity_.x;
 	worldTransform_.translation_.y += EB_velocity_.y;
-	worldTransform_.translation_.z += EB_velocity_.z;
-
-	//// 弾の速度(X軸方向)
-	//EB_velocity_.x = 1.0f;
-
-	//// 座標を移動させる (1フレーム分の移動量)
-	//worldTransform_.translation_.x -= EB_velocity_.x;
-
+	
+	//////////////
 
 
 	// アフィン変換行列
