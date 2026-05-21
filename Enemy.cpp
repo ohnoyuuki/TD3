@@ -88,8 +88,12 @@ void Enemy::Update() {
 			fireTimer_ = kFireInterval;
 		}
 
-		// HPでフェーズ変更a
-		if (E_hp_ < E_maxHP_ * 0.6f && phase_ != Phase::Rage) {
+		// HP30%以下
+		if (E_hp_ < E_maxHP_ * 0.3f) {
+			phase_ = Phase::Berserk;
+		}
+		// HP60%以下
+		else if (E_hp_ < E_maxHP_ * 0.6f) {
 			phase_ = Phase::Rage;
 		}
 

@@ -46,7 +46,8 @@ public:
 	{
 		Approach,
 		Attack,
-		Rage, // HP低いとき
+		Rage,  // HP60%以下
+		Berserk,// HP30%以下 
 		Destroyed,
 	};
 	Phase phase_ = Phase::Approach;
