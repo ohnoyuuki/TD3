@@ -92,7 +92,7 @@ void Enemy::Update() {
 		if (E_hp_ < E_maxHP_ * 0.3f) {
 			phase_ = Phase::Berserk;
 		}
-		// HP60%以下
+		// HP60%以下 
 		else if (E_hp_ < E_maxHP_ * 0.6f) {
 			phase_ = Phase::Rage;
 		}
@@ -154,11 +154,48 @@ void Enemy::Update() {
 			/////////////////////////////////////////////////////////////
 
 			Fire();
-			fireTimer_ = 10; // ←めっちゃ速くする
+			fireTimer_ = 15; // ←めっちゃ速くする
+		}
+		// HP30%以下で暴走
+		if (E_hp_ < E_maxHP_ * 0.3f) {
+			phase_ = Phase::Berserk;
+		}
+		/*if (E_hp_ <= 0) {
+			/// isEnemyDead_ = true;
+			phase_ = Phase::Destroyed;
+		}*/
+
+		break;
+	}
+
+	case Phase::Berserk: {
+
+		// 超高速移動
+		worldTransform_.translation_.x -= 0.5f;
+
+		if (worldTransform_.translation_.x < 10.0f) {
+			worldTransform_.translation_.x = 10.0f;
 		}
 
+		// 激しい上下移動
+		walkTimer_ += 10.0f / 60.0f;
+
+		worldTransform_.translation_.y = sin(walkTimer_ * 0.5f) * 20.0f;
+
+		// 弾連射
+		fireTimer_--;
+
+		if (fireTimer_ <= 0) {
+
+			Fire();
+			Fire();
+			Fire();
+
+			fireTimer_ = 13;
+		}
+
+		// HP0
 		if (E_hp_ <= 0) {
-			/// isEnemyDead_ = true;
 			phase_ = Phase::Destroyed;
 		}
 
