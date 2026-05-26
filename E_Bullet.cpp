@@ -2,9 +2,9 @@
 using namespace KamataEngine;
 #include "MyMath.h"
 
-void E_Bullet::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity)
+void E_Bullet::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity, float scale)
 {
-	assert(model);
+	//assert(model);
 
 	model_ = model;
 
@@ -16,6 +16,12 @@ void E_Bullet::Initialize(KamataEngine::Model* model, const KamataEngine::Vector
 
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
+
+
+	bulletScale_ = scale;
+
+	worldTransform_.scale_ = {bulletScale_, bulletScale_, bulletScale_};
+
 }
 
 void E_Bullet::Update()
@@ -104,8 +110,12 @@ void E_Bullet::OnCollition4(const P_Bullet* p_bullet)
 {
 	(void)p_bullet; 
 
-
-	isDead_eb_ = true;
+	/*
+	if (rand() % 70 == 0)
+	{
+		isDead_eb_ = true;
+	}*/
+	
 
 
 

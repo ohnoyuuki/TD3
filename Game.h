@@ -99,6 +99,14 @@ private:
 
 
 
+	//カーソル切り替え
+	uint32_t M_Handle_ = 0;
+	KamataEngine::Sprite* M_Sprite_ = nullptr;
+	uint32_t M_Handle_2 = 0;
+	KamataEngine::Sprite* M_Sprite_2 = nullptr;
+
+
+
 
 	// プレイヤーのHP
 	uint32_t playerHPHandle_ = 0;
@@ -117,6 +125,8 @@ private:
 	KamataEngine::Sprite* _enemyHPSprite_ = nullptr;
 
 #pragma endregion
+
+	
 
 #pragma region 天球
 

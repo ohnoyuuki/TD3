@@ -147,6 +147,25 @@ void Game::Initialize()
 	worldTransformEarth_.Initialize();
 	worldTransformEarth_.translation_ = {0, -350, 100};
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #pragma region 天球
 
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
@@ -288,7 +307,11 @@ void Game::Update()
 	ESC_Handle_2 = TextureManager::Load("UI/Pushed_ESC.png");
 	ESC_Sprite_2 = KamataEngine::Sprite::Create(ESC_Handle_2, {10, 100});
 
-
+	
+	M_Handle_ = TextureManager::Load("UI/M_UI.png");
+	M_Sprite_ = KamataEngine::Sprite::Create(M_Handle_, {148, 100});
+	M_Handle_2 = TextureManager::Load("UI/Pushed_M_UI.png");
+	M_Sprite_2 = KamataEngine::Sprite::Create(M_Handle_2, {148, 100});
 
 
 
@@ -379,9 +402,9 @@ void Game::Update()
 		#pragma endregion
 
 		#pragma region プレイヤー
-	player_->Update();
-	player_->RotateX();
-	player_->RotateZ();
+		player_->Update();
+		player_->RotateX();
+		player_->RotateZ();
 		#pragma endregion
 
 		#pragma region 敵
@@ -401,6 +424,7 @@ void Game::Update()
 		CheckAllCollisions();
 
 #pragma region 仮設コード
+		/*
 		// ゲームクリア(仮)
 		if (Input::GetInstance()->TriggerKey(DIK_C))
 		{
@@ -410,7 +434,7 @@ void Game::Update()
 		if (Input::GetInstance()->TriggerKey(DIK_O))
 		{
 			phase_ = Phase::kDeath;
-		}
+		}*/
 
 #pragma endregion
 
@@ -450,7 +474,7 @@ void Game::Update()
 			gameActive_ = true;
 		}
 
-		//ImGui::Text("T : Title  ,  ESC : Continue");
+		
 		if (Input::GetInstance()->TriggerKey(DIK_T)) 
 		{
 			phase_ = Phase::kFadeOut3;
@@ -521,14 +545,20 @@ void Game::Update()
 
 void Game::Draw()
 {
-
 	// DirectXCommonインスタンスの取得
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 	// スプライト
 	Sprite::PreDraw(dxCommon->GetCommandList());
 
 #pragma region UI
-	if (phase_ == Phase::kPlay || phase_ == Phase::kFadeIn || phase_ == Phase::kPose || phase_ == Phase::kDeath || phase_ == Phase::kEnemyDeath)
+	if
+		(
+			phase_ == Phase::kPlay || 
+			phase_ == Phase::kFadeIn || 
+			phase_ == Phase::kPose || 
+			phase_ == Phase::kDeath || 
+			phase_ == Phase::kEnemyDeath
+		)
 	{
 		ESC_Sprite_->Draw();
 
@@ -536,6 +566,14 @@ void Game::Draw()
 		{
 			ESC_Sprite_2->Draw();
 		}
+
+		M_Sprite_->Draw();
+		if (Input::GetInstance()->PushKey(DIK_M))
+		{
+			M_Sprite_2->Draw();
+		}
+
+
 
 
 		_playerHPSprite_->Draw();
@@ -565,8 +603,6 @@ void Game::Draw()
 
 
 #pragma endregion
-
-
 
 	Sprite::PostDraw();
 
@@ -621,6 +657,9 @@ Game::~Game()
 
 	delete ESC_Sprite_;
 	delete ESC_Sprite_2;
+
+	delete M_Sprite_;
+	delete M_Sprite_2;
 
 	delete PoseUI_Sprite_;
 	delete PoseUI_Sprite_2;

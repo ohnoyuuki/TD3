@@ -46,8 +46,8 @@ public:
 	{
 		Approach,
 		Attack,
-		Rage,  // HP60%以下
-		Berserk,// HP30%以下 
+		Rage, // HP60%以下
+		//Berserk, // HP30%以下 
 		Destroyed,
 	};
 	Phase phase_ = Phase::Approach;
@@ -59,8 +59,11 @@ public:
 #pragma region 衝突判定 [ プレイヤーの弾  <<===>>  敵 ]
 
 	// キャラクターの当たり判定サイズ
-	static inline const float kWidth = 1.5f;
-	static inline const float kHeight = 2.5f;
+	//static inline const float kWidth = 1.5f;
+	//static inline const float kHeight = 2.5f;
+
+	static inline const float kWidth = 3.0f;
+	static inline const float kHeight = 4.0f;
 
 	// void OnCollisionE();
 	const std::list<E_Bullet*>& GetE_Bullets() const { return e_bullets_; }
@@ -104,7 +107,10 @@ private:
 
 	KamataEngine::Vector3 velocity_ = {};
 
-	int32_t E_maxHP_ = 10000;
+	//int32_t E_maxHP_ = 10000;
+
+	int32_t E_maxHP_ = 25000;
+
 	int32_t E_hp_ = E_maxHP_;
 
 	// 発射タイマー
@@ -115,7 +121,14 @@ private:
 
 	Player* player_ = nullptr;
 
-	// 音
-	// uint32_t E_V_Handle_ = 0;
-	// uint32_t E_Voice_ = 0;
+	// 咆哮
+	bool isE_V_Played_ = false;
+	uint32_t E_V_Handle_ = 0;
+	uint32_t E_Voice_ = 0;
+
+	// 攻撃音
+	uint32_t E_A_Handle_ = 0;
+	uint32_t E_Attack_ = 0;
+
+
 };
