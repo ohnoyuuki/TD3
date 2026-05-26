@@ -171,16 +171,17 @@ void Enemy::Update() {
 	case Phase::Berserk: {
 
 		// 超高速移動
-		worldTransform_.translation_.x -= 0.5f;
+		worldTransform_.translation_.x -= 0.2f;
 
 		if (worldTransform_.translation_.x < 10.0f) {
 			worldTransform_.translation_.x = 10.0f;
 		}
 
 		// 激しい上下移動
-		walkTimer_ += 10.0f / 60.0f;
+		walkTimer_ += 4.0f / 60.0f;
 
-		worldTransform_.translation_.y = sin(walkTimer_ * 0.5f) * 20.0f;
+		//上下移動の幅
+		worldTransform_.translation_.y = sin(walkTimer_ * 0.5f) * 15.0f;
 
 		// 弾連射
 		fireTimer_--;
@@ -191,7 +192,7 @@ void Enemy::Update() {
 			Fire();
 			Fire();
 
-			fireTimer_ = 13;
+			fireTimer_ = 14;
 		}
 
 		// HP0
